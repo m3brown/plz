@@ -1,0 +1,13 @@
+.vscode
+__pycache__
+plz.egg-info
+plz.config
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
