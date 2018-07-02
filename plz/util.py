@@ -31,6 +31,7 @@ def git_root():
 
 
 def plz_config(root):
+    root = root.rstrip('/')
     config_file = '{}/plz.config'.format(root)
     print(Fore.CYAN)
     print("[INFO] Using config: {}".format(config_file))

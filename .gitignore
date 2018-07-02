@@ -2,6 +2,8 @@
 __pycache__
 plz.egg-info
 plz.config
+.pytest_cache
+*.swp
 
 # Environments
 .env
