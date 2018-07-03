@@ -1,14 +1,21 @@
 from plz.util import plz_config
-from mock import patch
 from io import StringIO
 import pytest
+import sys
+
+if sys.version_info.major > 2:
+    from unittest.mock import patch
+    builtins_module = 'builtins'
+else:
+    from mock import patch
+    builtins_module = '__builtin__'
 
 
-@patch('builtins.open')
+@patch('{}.open'.format(builtins_module))
 def test_plz_config_loads_yaml_file(mock_open):
     # Arrange
     test_path = '/test/root/path'
-    mock_open.return_value = StringIO("""- id: run
+    mock_open.return_value = StringIO(u"""- id: run
   name: runserver
   cmd: echo "./manage.py runserver"
 """)
@@ -46,11 +53,11 @@ def test_plz_config_aborts_if_null_root():
         plz_config(test_path)
 
 
-@patch('builtins.open')
+@patch('{}.open'.format(builtins_module))
 def test_plz_config_handles_extra_trailing_slash(mock_open):
     # Arrange
     test_path = '/test/root/path'
-    mock_open.return_value = StringIO('')
+    mock_open.return_value = StringIO(u'')
 
     # Act
     plz_config(test_path+"/")

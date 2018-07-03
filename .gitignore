@@ -1,9 +1,12 @@
 .vscode
 __pycache__
+*.pyc
 plz.egg-info
 plz.config
 .pytest_cache
 *.swp
+.coverage
+.tox
 
 # Environments
 .env
