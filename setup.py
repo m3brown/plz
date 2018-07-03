@@ -1,10 +1,14 @@
 #!/usr/bin/env python
+from setuptools import setup
 
-from setuptools import setup, find_packages
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
-    name="plz",
+    name="plz-cmd",
     description="command line app for running configurable shell commands",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     version="0.1.0",
     license="MIT",
     classifiers=[
@@ -16,7 +20,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    packages=find_packages(exclude=('tests*')),
+    packages=['plz'],
     install_requires=[
         'PyYAML>=3.0',
         'colorama>=0.3.0',
