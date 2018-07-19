@@ -28,12 +28,12 @@ pip install plz-cmd
 
 ### Example
 
-plz looks for a `plz.config` YAML file in the root of the git repo you're
+plz looks for a `.plz.yaml` file in the root of the git repo you're
 currently in. This file can (and should) be checked into version control.
 
-Note: this app does not currently support running plz.config files that are not inside a git repo directory.
+Note: this app does not currently support running .plz.yaml files that are not inside a git repo directory.
 
-Suppose we have a `plz.config` file in the root of a git repo:
+Suppose we have a `.plz.yaml` file in the root of a git repo:
 
 ```yaml
 - id: run

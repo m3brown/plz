@@ -31,7 +31,7 @@ def test_plz_config_loads_yaml_file(mock_open, mock_git_root):
     result = plz_config()
 
     # Assert
-    mock_open.assert_called_with('{}/plz.config'.format(test_path))
+    mock_open.assert_called_with('{}/.plz.yaml'.format(test_path))
     assert(result == expected_result)
 
 
@@ -69,4 +69,4 @@ def test_plz_config_handles_extra_trailing_slash(mock_open, mock_git_root):
     plz_config()
 
     # Assert
-    mock_open.assert_called_with('{}/plz.config'.format(test_path))
+    mock_open.assert_called_with('{}/.plz.yaml'.format(test_path))

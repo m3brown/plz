@@ -15,7 +15,7 @@ def git_root():
 
 def plz_config():
     root = git_root().rstrip('/')
-    config_file = '{}/plz.config'.format(root)
+    config_file = '{}/.plz.yaml'.format(root)
     print(Fore.CYAN)
     print("[INFO] Using config: {}".format(config_file))
     print(Style.RESET_ALL)
