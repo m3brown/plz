@@ -1,5 +1,6 @@
 import yaml
 import sys
+from os.path import isfile
 from colorama import Fore, Style
 from .runner import run_command
 
@@ -13,10 +14,18 @@ def git_root():
         sys.exit(1)
 
 
-def plz_config():
-    root = git_root().rstrip('/')
-    config_file = '{}/.plz.yaml'.format(root)
+def load_config(filename):
     print(Fore.CYAN)
-    print("[INFO] Using config: {}".format(config_file))
+    print("[INFO] Using config: {}".format(filename))
     print(Style.RESET_ALL)
-    return yaml.load(open(config_file))
+    return yaml.load(open(filename))
+
+
+def plz_config():
+    filename = '.plz.yaml'
+    if isfile(filename):
+        return (load_config(filename), None)
+    else:
+        root = git_root().rstrip('/')
+        config_file = '{}/{}'.format(root, filename)
+        return (load_config(config_file), root)

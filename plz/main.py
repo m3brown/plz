@@ -5,12 +5,12 @@ import sys
 
 
 def execute_from_config(cmd):
-    config = plz_config()
+    (config, cwd) = plz_config()
 
     for task in config:
         if 'id' in task and task['id'] == cmd:
             if 'cmd' in task:
-                rc = gather_and_run_commands(task['cmd'])
+                rc = gather_and_run_commands(task['cmd'], cwd)
                 sys.exit(rc)
     print(Fore.RED + "Could not find command with id '{}', review the available options in the config file.".format(cmd))
     print(Style.RESET_ALL)

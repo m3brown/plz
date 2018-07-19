@@ -1,4 +1,4 @@
-from plz.config import plz_config
+from plz.config import plz_config, load_config
 from io import StringIO
 import pytest
 import sys
@@ -11,12 +11,80 @@ else:
     builtins_module = '__builtin__'
 
 
+@patch('plz.config.isfile')
+@patch('plz.config.load_config')
+def test_plz_config_detects_local_file(mock_load_config, mock_isfile):
+    # Arrange
+    mock_isfile.return_value = True
+
+    # Act
+    plz_config()
+
+    # Assert
+    mock_load_config.assert_called_with('.plz.yaml')
+
+
+@patch('plz.config.isfile')
 @patch('plz.config.git_root')
-@patch('{}.open'.format(builtins_module))
-def test_plz_config_loads_yaml_file(mock_open, mock_git_root):
+@patch('plz.config.load_config')
+def test_plz_config_falls_back_to_git_root_file(mock_load_config, mock_git_root, mock_isfile):
     # Arrange
     test_path = '/test/root/path'
     mock_git_root.return_value = test_path
+    mock_isfile.return_value = False
+
+    # Act
+    plz_config()
+
+    # Assert
+    mock_load_config.assert_called_with('{}/.plz.yaml'.format(test_path))
+
+
+@patch('plz.config.isfile')
+@patch('plz.config.git_root')
+def test_plz_config_aborts_if_empty_git_root(mock_git_root, mock_isfile):
+    # Arrange
+    mock_git_root.return_value = ''
+    mock_isfile.return_value = False
+
+    # Act
+    # Assert
+    with pytest.raises(Exception):
+        plz_config()
+
+
+@patch('plz.config.isfile')
+@patch('plz.config.git_root')
+def test_plz_config_aborts_if_null_root(mock_git_root, mock_isfile):
+    # Arrange
+    mock_git_root.return_value = None
+    mock_isfile.return_value = False
+
+    # Act
+    # Assert
+    with pytest.raises(Exception):
+        plz_config()
+
+
+@patch('plz.config.isfile')
+@patch('plz.config.git_root')
+@patch('plz.config.load_config')
+def test_plz_config_handles_extra_trailing_slash(mock_load_config, mock_git_root, mock_isfile):
+    # Arrange
+    test_path = '/test/root/path'
+    mock_git_root.return_value = test_path + "/"
+    mock_isfile.return_value = False
+
+    # Act
+    plz_config()
+
+    # Assert
+    mock_load_config.assert_called_with('{}/.plz.yaml'.format(test_path))
+
+
+@patch('{}.open'.format(builtins_module))
+def test_laod_config_loads_yaml_file(mock_open):
+    # Arrange
     mock_open.return_value = StringIO(u"""- id: run
   name: runserver
   cmd: echo "./manage.py runserver"
@@ -28,45 +96,7 @@ def test_plz_config_loads_yaml_file(mock_open, mock_git_root):
     }]
 
     # Act
-    result = plz_config()
+    result = load_config('path')
 
     # Assert
-    mock_open.assert_called_with('{}/.plz.yaml'.format(test_path))
     assert(result == expected_result)
-
-
-@patch('plz.config.git_root')
-def test_plz_config_aborts_if_empty_root(mock_git_root):
-    # Arrange
-    mock_git_root.return_value = ''
-
-    # Act
-    # Assert
-    with pytest.raises(Exception):
-        plz_config()
-
-
-@patch('plz.config.git_root')
-def test_plz_config_aborts_if_null_root(mock_git_root):
-    # Arrange
-    mock_git_root.return_value = None
-
-    # Act
-    # Assert
-    with pytest.raises(Exception):
-        plz_config()
-
-
-@patch('plz.config.git_root')
-@patch('{}.open'.format(builtins_module))
-def test_plz_config_handles_extra_trailing_slash(mock_open, mock_git_root):
-    # Arrange
-    test_path = '/test/root/path'
-    mock_git_root.return_value = test_path + "/"
-    mock_open.return_value = StringIO(u'')
-
-    # Act
-    plz_config()
-
-    # Assert
-    mock_open.assert_called_with('{}/.plz.yaml'.format(test_path))

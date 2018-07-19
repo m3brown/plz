@@ -5,7 +5,7 @@ from .glob_tools import safe_glob
 
 
 def run_command(command, std_output=True, cwd=None):
-    cleaned_cmd = safe_glob(shlex.split(command))
+    cleaned_cmd = safe_glob(shlex.split(command), cwd=cwd)
     process = subprocess.Popen(cleaned_cmd, stdout=subprocess.PIPE, cwd=cwd)
     output_log = []
     while True:
@@ -20,21 +20,20 @@ def run_command(command, std_output=True, cwd=None):
     return rc, output_log
 
 
-def gather_and_run_commands(cmd):
+def gather_and_run_commands(cmd, cwd=None):
     """
     The cmd argument can either be a string or list
 
     - If it's a string, execute the command.
     - If it's a list, recursively run each item in the list.
     """
-
     if type(cmd) == str:
         print(Fore.CYAN + Style.DIM +
               "===============================================================================")
         print("Running command: {}".format(cmd))
         print("===============================================================================")
         print(Style.RESET_ALL)
-        rc, _ = run_command(cmd)
+        rc, _ = run_command(cmd, cwd=cwd)
         if rc > 0:
             print(Fore.RED)
         else:
@@ -52,7 +51,7 @@ def gather_and_run_commands(cmd):
                     "===============================================================================")
                 print(Style.RESET_ALL)
             else:
-                rc = gather_and_run_commands(item)
+                rc = gather_and_run_commands(item, cwd=cwd)
     else:
         raise Exception("Unrecognized cmd type: {}".format(type(cmd)))
     return rc

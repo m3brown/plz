@@ -28,12 +28,14 @@ pip install plz-cmd
 
 ### Example
 
-plz looks for a `.plz.yaml` file in the root of the git repo you're
-currently in. This file can (and should) be checked into version control.
+plz looks for a `.plz.yaml` file either in the current directory or in the root
+of the git repo you're currently in. This file can (and should) be checked into
+version control.
 
-Note: this app does not currently support running .plz.yaml files that are not inside a git repo directory.
+For a .plz.yaml file located in the git root directory, commands run will be
+executed relative to that directory, not the current directory.
 
-Suppose we have a `.plz.yaml` file in the root of a git repo:
+Suppose we have the following `.plz.yaml` file:
 
 ```yaml
 - id: run
@@ -59,3 +61,7 @@ plz run
 plz test
 plz setup
 ```
+
+### Globbing
+
+plz supports asterisk expansion.  For example, the cmd `ls *.py` will work as expected.
