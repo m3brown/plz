@@ -1,4 +1,9 @@
-from plz.util import run_command
+from plz.runner import run_command
+
+try:
+    from mock import patch, ANY
+except ImportError:
+    from unittest.mock import patch, ANY
 
 
 def test_run_command_returns_tuple():
@@ -55,3 +60,21 @@ def test_run_command_does_not_print_to_stdout_when_disabled(capsys):
 
     # Assert
     assert out == ""
+
+
+def test_run_command_simple_glob(capsys):
+    # Arrange
+    stdout = '\n'.join([
+        "plz/__init__.py",
+        "plz/config.py",
+        "plz/glob_tools.py",
+        "plz/main.py",
+        "plz/runner.py"
+    ]) + "\n"
+
+    # Act
+    run_command('ls plz/*.py')
+    out, err = capsys.readouterr()
+
+    # Assert
+    assert out == stdout

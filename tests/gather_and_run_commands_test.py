@@ -1,9 +1,13 @@
-from plz.util import gather_and_run_commands
-from mock import patch, call
+from plz.runner import gather_and_run_commands
 import pytest
 
+try:
+    from mock import patch, call
+except ImportError:
+    from unittest.mock import patch, call
 
-@patch('plz.util.run_command')
+
+@patch('plz.runner.run_command')
 def test_gather_and_run_string_cmd(mock_run):
     # Arrange
     mock_run.return_value = (0, ['output'])
@@ -16,7 +20,7 @@ def test_gather_and_run_string_cmd(mock_run):
     mock_run.assert_called_with(cmd)
 
 
-@patch('plz.util.run_command')
+@patch('plz.runner.run_command')
 def test_gather_and_run_list_cmds(mock_run):
     # Arrange
     mock_run.return_value = (0, ['output'])
