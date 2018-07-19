@@ -66,14 +66,10 @@ def test_run_command_simple_glob(capsys):
     # Arrange
     stdout = '\n'.join([
         "plz/__init__.py",
-        "plz/config.py",
-        "plz/glob_tools.py",
-        "plz/main.py",
-        "plz/runner.py"
     ]) + "\n"
 
     # Act
-    run_command('ls plz/*.py')
+    run_command('ls plz/__*.py')
     out, err = capsys.readouterr()
 
     # Assert
