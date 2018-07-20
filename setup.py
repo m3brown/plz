@@ -9,7 +9,7 @@ setup(
     description="command line app for running configurable shell commands",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.2.0",
+    version="0.3.0",
     license="MIT",
     classifiers=[
         'License :: OSI Approved :: MIT License',

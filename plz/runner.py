@@ -1,12 +1,16 @@
+import os
 import subprocess
 import shlex
 from colorama import Fore, Style
 from .glob_tools import safe_glob
 
+env = dict(os.environ, **{'PYTHONUNBUFFERED': '1'})
+
 
 def run_command(command, std_output=True, cwd=None):
     cleaned_cmd = safe_glob(shlex.split(command), cwd=cwd)
-    process = subprocess.Popen(cleaned_cmd, stdout=subprocess.PIPE, cwd=cwd)
+    process = subprocess.Popen(
+        cleaned_cmd, stdout=subprocess.PIPE, cwd=cwd, env=env)
     output_log = []
     while True:
         output = process.stdout.readline().decode('utf-8').strip()
