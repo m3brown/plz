@@ -65,3 +65,14 @@ plz setup
 ### Globbing
 
 plz supports asterisk expansion.  For example, the cmd `ls *.py` will work as expected.
+
+### Development
+
+Setting up for development is easy when plz is already installed!
+
+```
+git clone https://github.com/m3brown/plz
+cd plz
+plz setup
+plz test
+```

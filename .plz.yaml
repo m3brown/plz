@@ -1,0 +1,15 @@
+- id: publish
+  name: publish
+  cmd:
+  - rm dist/*
+  - pipenv run python setup.py sdist bdist_wheel
+  - pipenv run twine upload dist/*
+- id: test
+  name: test code
+  cmd:
+  - pipenv run pytest
+- id: setup
+  name: set up development environment
+  cmd:
+  - pipenv install --skip-lock -r requirements-dev.txt
+  - pipenv run pre-commit install

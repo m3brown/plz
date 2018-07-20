@@ -2,13 +2,15 @@
 __pycache__
 *.pyc
 plz_cmd.egg-info
-.plz.yaml
 .pytest_cache
 *.swp
 .coverage
 .tox
 dist/
 build/
+
+# utilize requirements-dev.txt instead of Pipfile to simplify travis config
+Pipfile
 
 # Environments
 .env
