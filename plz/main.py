@@ -18,15 +18,14 @@ def execute_from_config(cmd, args):
     sys.exit(1)
 
 
-def main():
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
+
     parser = argparse.ArgumentParser()
     parser.add_argument('cmd')
     parser.add_argument('passthrough_args', nargs=argparse.REMAINDER)
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     execute_from_config(args.cmd, args.passthrough_args)
-
-
-if __name__ == '__main__':
-    main()
