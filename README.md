@@ -52,6 +52,8 @@ Suppose we have the following `.plz.yaml` file:
   - pipenv install
   - pipenv run ./manage.py migrate
   - yarn install
+- id: ls
+  cmd: ls
 ```
 
 The following commands would be available:
@@ -65,6 +67,50 @@ plz setup
 ### Globbing
 
 plz supports asterisk expansion.  For example, the cmd `ls *.py` will work as expected.
+
+### Runtime arguments
+
+plz supports passing custom arguments when running the plz command. For example:
+
+```
+# bind to port 8001 instead of the default 8000
+plz run 127.0.0.1:8001
+```
+
+Any passed arguments will be tested to see if they are file paths relative to
+the current directory when running the command. Using this repo as an example:
+
+```
+bash$ ls .*.yaml
+.plz.yaml               .pre-commit-config.yaml
+
+bash$ cd plz
+
+bash$ plz ls ../.*.yaml
+
+[INFO] Using config: /path/plz/.plz.yaml
+
+===============================================================================
+Running command: ls
+===============================================================================
+
+.plz.yaml
+.pre-commit-config.yaml
+
+[INFO] Process complete, return code: 0
+
+bash$ plz ls __*.py
+
+[INFO] Using config: /path/plz/.plz.yaml
+
+===============================================================================
+Running command: ls
+===============================================================================
+
+plz/__init__.py
+
+[INFO] Process complete, return code: 0
+```
 
 ### Development
 

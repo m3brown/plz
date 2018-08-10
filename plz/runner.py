@@ -1,16 +1,23 @@
 import os
 import subprocess
 import shlex
+from itertools import chain
 from colorama import Fore, Style
-from .glob_tools import safe_glob
+from .glob_tools import process_absolute_glob, process_relative_glob
 
 env = dict(os.environ, **{'PYTHONUNBUFFERED': '1'})
 
 
-def run_command(command, std_output=True, cwd=None):
-    cleaned_cmd = safe_glob(shlex.split(command), cwd=cwd)
+def run_command(command, std_output=True, cwd=None, args=[]):
+    pwd = os.getcwd()
+    if not cwd:
+        cwd = pwd
+    cleaned_cmd = process_absolute_glob(shlex.split(command), cwd=cwd)
+    if args:
+        relpath = os.path.relpath(pwd, cwd)
+        args = process_relative_glob(args, post_adjust_path=relpath)
     process = subprocess.Popen(
-        cleaned_cmd, stdout=subprocess.PIPE, cwd=cwd, env=env)
+        chain(cleaned_cmd, args), stdout=subprocess.PIPE, cwd=cwd, env=env)
     output_log = []
     while True:
         output = process.stdout.readline().decode('utf-8').strip()
@@ -24,7 +31,7 @@ def run_command(command, std_output=True, cwd=None):
     return rc, output_log
 
 
-def gather_and_run_commands(cmd, cwd=None):
+def gather_and_run_commands(cmd, cwd=None, args=[]):
     """
     The cmd argument can either be a string or list
 
@@ -37,7 +44,7 @@ def gather_and_run_commands(cmd, cwd=None):
         print("Running command: {}".format(cmd))
         print("===============================================================================")
         print(Style.RESET_ALL)
-        rc, _ = run_command(cmd, cwd=cwd)
+        rc, _ = run_command(cmd, cwd=cwd, args=args)
         if rc > 0:
             print(Fore.RED)
         else:
@@ -55,7 +62,7 @@ def gather_and_run_commands(cmd, cwd=None):
                     "===============================================================================")
                 print(Style.RESET_ALL)
             else:
-                rc = gather_and_run_commands(item, cwd=cwd)
+                rc = gather_and_run_commands(item, cwd=cwd, args=args)
     else:
         raise Exception("Unrecognized cmd type: {}".format(type(cmd)))
     return rc

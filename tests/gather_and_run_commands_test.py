@@ -17,7 +17,7 @@ def test_gather_and_run_string_cmd(mock_run):
     gather_and_run_commands(cmd)
 
     # Assert
-    mock_run.assert_called_with(cmd, cwd=None)
+    mock_run.assert_called_with(cmd, cwd=None, args=[])
 
 
 @patch('plz.runner.run_command')
@@ -26,9 +26,9 @@ def test_gather_and_run_list_cmds(mock_run):
     mock_run.return_value = (0, ['output'])
     cmd = ["test cmd", "second cmd", "third cmd"]
     calls = [
-        call(cmd[0], cwd=None),
-        call(cmd[1], cwd=None),
-        call(cmd[2], cwd=None),
+        call(cmd[0], cwd=None, args=[]),
+        call(cmd[1], cwd=None, args=[]),
+        call(cmd[2], cwd=None, args=[]),
     ]
 
     # Act

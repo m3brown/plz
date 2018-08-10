@@ -13,3 +13,5 @@
   cmd:
   - pipenv install --skip-lock -r requirements-dev.txt
   - pipenv run pre-commit install
+- id: ls
+  cmd: ls

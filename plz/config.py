@@ -1,6 +1,6 @@
 import yaml
 import sys
-from os.path import isfile
+import os
 from colorama import Fore, Style
 from .runner import run_command
 
@@ -23,7 +23,7 @@ def load_config(filename):
 
 def plz_config():
     filename = '.plz.yaml'
-    if isfile(filename):
+    if os.path.isfile(filename):
         return (load_config(filename), None)
     else:
         root = git_root().rstrip('/')

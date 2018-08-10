@@ -11,7 +11,7 @@ else:
     builtins_module = '__builtin__'
 
 
-@patch('plz.config.isfile')
+@patch('os.path.isfile')
 @patch('plz.config.load_config')
 def test_plz_config_detects_local_file(mock_load_config, mock_isfile):
     # Arrange
@@ -24,7 +24,7 @@ def test_plz_config_detects_local_file(mock_load_config, mock_isfile):
     mock_load_config.assert_called_with('.plz.yaml')
 
 
-@patch('plz.config.isfile')
+@patch('os.path.isfile')
 @patch('plz.config.git_root')
 @patch('plz.config.load_config')
 def test_plz_config_falls_back_to_git_root_file(mock_load_config, mock_git_root, mock_isfile):
@@ -40,7 +40,7 @@ def test_plz_config_falls_back_to_git_root_file(mock_load_config, mock_git_root,
     mock_load_config.assert_called_with('{}/.plz.yaml'.format(test_path))
 
 
-@patch('plz.config.isfile')
+@patch('os.path.isfile')
 @patch('plz.config.git_root')
 def test_plz_config_aborts_if_empty_git_root(mock_git_root, mock_isfile):
     # Arrange
@@ -53,7 +53,7 @@ def test_plz_config_aborts_if_empty_git_root(mock_git_root, mock_isfile):
         plz_config()
 
 
-@patch('plz.config.isfile')
+@patch('os.path.isfile')
 @patch('plz.config.git_root')
 def test_plz_config_aborts_if_null_root(mock_git_root, mock_isfile):
     # Arrange
@@ -66,7 +66,7 @@ def test_plz_config_aborts_if_null_root(mock_git_root, mock_isfile):
         plz_config()
 
 
-@patch('plz.config.isfile')
+@patch('os.path.isfile')
 @patch('plz.config.git_root')
 @patch('plz.config.load_config')
 def test_plz_config_handles_extra_trailing_slash(mock_load_config, mock_git_root, mock_isfile):

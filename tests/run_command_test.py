@@ -1,4 +1,5 @@
 from plz.runner import run_command
+import os
 
 try:
     from mock import patch, ANY
@@ -70,6 +71,54 @@ def test_run_command_simple_glob(capsys):
 
     # Act
     run_command('ls plz/__*.py')
+    out, err = capsys.readouterr()
+
+    # Assert
+    assert out == stdout
+
+
+def test_run_command_glob_with_cwd(capsys):
+    """
+    Integration test
+
+    Scenario: the .plz.yaml file is "located" in the plz directory.
+
+    In this case, the user will by running something like: `plz ls`
+    """
+    # Arrange
+    stdout = '\n'.join([
+        "__init__.py",
+    ]) + "\n"
+    cwd = os.path.join(os.getcwd(), 'plz')
+
+    # Act
+    run_command('ls __*.py', cwd=cwd)
+    out, err = capsys.readouterr()
+
+    # Assert
+    assert out == stdout
+
+
+def test_run_command_glob_with_cwd_and_args(capsys):
+    """
+    Integration test
+
+    Scenario: the .plz.yaml file is "located" in the root of this repo, but
+    the command is run from the child plz directory.
+
+    In this case, the user will by running something like: `plz ls ../*.md`
+    """
+
+    # Arrange
+    stdout = '\n'.join([
+        "README.md",
+    ]) + "\n"
+    #cwd = os.path.join(os.getcwd(), 'plz')
+    cwd = os.getcwd()
+    os.chdir('plz')
+
+    # Act
+    run_command('ls', cwd=cwd, args=['../*.md'])
     out, err = capsys.readouterr()
 
     # Assert
