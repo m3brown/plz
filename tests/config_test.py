@@ -1,4 +1,4 @@
-from plz.config import plz_config, load_config
+from plz.config import plz_config, load_config, git_root
 from io import StringIO
 import pytest
 import sys
@@ -100,3 +100,28 @@ def test_laod_config_loads_yaml_file(mock_open):
 
     # Assert
     assert(result == expected_result)
+
+
+@patch('sys.exit')
+@patch('plz.config.run_command')
+def test_git_root_with_bad_rc(mock_run_command, mock_exit):
+    # Arrange
+    mock_run_command.return_value = (10, ['sample output'])
+
+    # Act
+    git_root()
+
+    # Assert
+    mock_exit.assert_called_with(1)
+
+
+@patch('plz.config.run_command')
+def test_git_root_with_good_rc(mock_run_command):
+    # Arrange
+    mock_run_command.return_value = (0, ['sample output', 'more results'])
+
+    # Act
+    result = git_root()
+
+    # Assert
+    assert result == 'sample output'
