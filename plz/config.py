@@ -3,12 +3,13 @@ import sys
 import os
 from colorama import Fore, Style
 from .runner import run_command
+import sh
 
 
 def git_root():
-    rc, output = run_command('git rev-parse --show-toplevel', std_output=False)
-    if rc == 0:
-        return output[0]
+    output = sh.Command('git')('rev-parse', '--show-toplevel')
+    if output.exit_code == 0:
+        return str(output).strip()
     else:
         print(Fore.RED + 'Could not find root of git repository' + Style.RESET_ALL)
         sys.exit(1)

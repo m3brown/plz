@@ -4,10 +4,10 @@ import pytest
 import sys
 
 if sys.version_info.major > 2:
-    from unittest.mock import patch
+    from unittest.mock import patch, MagicMock, PropertyMock
     builtins_module = 'builtins'
 else:
-    from mock import patch
+    from mock import patch, MagicMock, PropertyMock
     builtins_module = '__builtin__'
 
 
@@ -103,10 +103,13 @@ def test_laod_config_loads_yaml_file(mock_open):
 
 
 @patch('sys.exit')
-@patch('plz.config.run_command')
-def test_git_root_with_bad_rc(mock_run_command, mock_exit):
+@patch('sh.Command')
+def test_git_root_with_bad_rc(mock_sh, mock_exit):
     # Arrange
-    mock_run_command.return_value = (10, ['sample output'])
+    mock_sh_git = MagicMock()
+    mock_sh_git.__repr__ = lambda x: '/sample/path'
+    type(mock_sh_git).exit_code = PropertyMock(return_value=10)
+    mock_sh().return_value = mock_sh_git
 
     # Act
     git_root()
@@ -115,13 +118,16 @@ def test_git_root_with_bad_rc(mock_run_command, mock_exit):
     mock_exit.assert_called_with(1)
 
 
-@patch('plz.config.run_command')
-def test_git_root_with_good_rc(mock_run_command):
+@patch('sh.Command')
+def test_git_root_with_good_rc(mock_sh):
     # Arrange
-    mock_run_command.return_value = (0, ['sample output', 'more results'])
+    mock_sh_git = MagicMock()
+    mock_sh_git.__repr__ = lambda x: '/sample/path'
+    type(mock_sh_git).exit_code = PropertyMock(return_value=0)
+    mock_sh().return_value = mock_sh_git
 
     # Act
     result = git_root()
 
     # Assert
-    assert result == 'sample output'
+    assert result == '/sample/path'

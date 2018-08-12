@@ -10,7 +10,7 @@ except ImportError:
 @patch('plz.runner.run_command')
 def test_gather_and_run_string_cmd(mock_run):
     # Arrange
-    mock_run.return_value = (0, ['output'])
+    mock_run.return_value = 0
     cmd = "test cmd"
 
     # Act
@@ -23,7 +23,7 @@ def test_gather_and_run_string_cmd(mock_run):
 @patch('plz.runner.run_command')
 def test_gather_and_run_return_value(mock_run):
     # Arrange
-    mock_run.return_value = (0, ['output'])
+    mock_run.return_value = 0
     cmd = "test cmd"
 
     # Act
@@ -36,7 +36,7 @@ def test_gather_and_run_return_value(mock_run):
 @patch('plz.runner.run_command')
 def test_gather_and_run_list_cmds(mock_run):
     # Arrange
-    mock_run.return_value = (0, ['output'])
+    mock_run.return_value = 0
     cmd = ["test cmd", "second cmd", "third cmd"]
     calls = [
         call(cmd[0], cwd=None, args=[]),
@@ -64,7 +64,7 @@ def test_gather_and_run_invalid_cmd():
 @patch('plz.runner.run_command')
 def test_gather_and_run_string_cmd_with_cwd(mock_run):
     # Arrange
-    mock_run.return_value = (0, ['output'])
+    mock_run.return_value = 0
     cmd = "test cmd"
 
     # Act
@@ -77,7 +77,7 @@ def test_gather_and_run_string_cmd_with_cwd(mock_run):
 @patch('plz.runner.run_command')
 def test_gather_and_run_string_cmd_with_args(mock_run):
     # Arrange
-    mock_run.return_value = (0, ['output'])
+    mock_run.return_value = 0
     cmd = "test cmd"
     args = ['derp', 'herp']
 
@@ -91,7 +91,7 @@ def test_gather_and_run_string_cmd_with_args(mock_run):
 @patch('plz.runner.run_command')
 def test_gather_and_run_list_cmds_with_error(mock_run):
     # Arrange
-    mock_run.return_value = (1, ['output'])
+    mock_run.return_value = 1
     cmd = ["test cmd", "second cmd", "third cmd"]
     calls = [
         call(cmd[0], cwd=None, args=[]),

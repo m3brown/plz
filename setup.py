@@ -9,7 +9,7 @@ setup(
     description="command line app for running configurable shell commands",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.4.1",
+    version="0.5.0",
     license="MIT",
     classifiers=[
         'License :: OSI Approved :: MIT License',
@@ -24,6 +24,7 @@ setup(
     install_requires=[
         'PyYAML>=3.0',
         'colorama>=0.3.0',
+        'sh>=1.12.14',
     ],
     entry_points={
         'console_scripts': [
