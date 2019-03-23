@@ -19,7 +19,7 @@ def load_config(filename):
     print(Fore.CYAN)
     print("[INFO] Using config: {}".format(filename))
     print(Style.RESET_ALL)
-    return yaml.load(open(filename))
+    return yaml.load(open(filename), Loader=yaml.SafeLoader)
 
 
 def plz_config():
