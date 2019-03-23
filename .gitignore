@@ -9,9 +9,6 @@ plz_cmd.egg-info
 dist/
 build/
 
-# utilize requirements-dev.txt instead of Pipfile to simplify travis config
-Pipfile
-
 # Environments
 .env
 .venv

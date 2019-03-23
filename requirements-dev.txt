@@ -1,9 +1,0 @@
--e .
-
-mock; python_version < '3'
-pytest
-pytest-cov
-tox-travis
-tox
-twine
-pre-commit

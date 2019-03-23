@@ -11,7 +11,5 @@
 - id: setup
   name: set up development environment
   cmd:
-  - pipenv install --skip-lock -r requirements-dev.txt
+  - pipenv sync --dev
   - pipenv run pre-commit install
-- id: ls
-  cmd: ls
