@@ -8,6 +8,8 @@ plz_cmd.egg-info
 .tox
 dist/
 build/
+.mypy_cache/
+monkeytype.sqlite3
 
 # Environments
 .env

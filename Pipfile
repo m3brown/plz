@@ -7,13 +7,16 @@ verify_ssl = true
 
 [dev-packages]
 plz-cmd = {editable = true,file = "."}
-mock = {version = "*", markers = "python_version < '3'"}
+mock = {version = "*",markers = "python_version < '3'"}
+monkeytype = "*"
 more-itertools = {version = "==5.0.0"} # pytest dependency
-pathlib2 = {version = ">=2.2.0", markers = "python_version < '3.5'"}
-scandir = {version = "*", markers = "python_version < '3.5'"}
+mypy = "*"
+pathlib2 = {version = ">=2.2.0",markers = "python_version < '3.5'"}
+pre-commit = "*"
 pytest = "*"
 pytest-cov = "*"
+pytest-monkeytype = "*"
+scandir = {version = "*",markers = "python_version < '3.5'"}
 tox-travis = "*"
 tox = "*"
 twine = "*"
-pre-commit = "*"

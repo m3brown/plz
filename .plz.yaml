@@ -6,10 +6,23 @@
   - pipenv run twine upload dist/*
 - id: test
   name: test code
-  cmd:
-  - pipenv run pytest
+  cmd: pipenv run pytest
 - id: setup
   name: set up development environment
   cmd:
   - pipenv sync --dev
   - pipenv run pre-commit install
+
+- id: mypy
+  cmd: pipenv run mypy plz
+
+- id: monkey-pytest
+  cmd: pipenv run pytest --monkeytype-output=./monkeytype.sqlite3
+
+- id: monkey-direct
+  cmd: monkeytype run -m plz demo
+
+- id: demo
+  name: sample command
+  cmd:
+  - echo "hello world"

@@ -72,6 +72,7 @@ def test_run_command_simple_glob(capfd):
     # Arrange
     stdout = '\n'.join([
         "plz/__init__.py",
+        "plz/__main__.py",
     ]) + "\n"
 
     # Act
@@ -94,6 +95,7 @@ def test_run_command_glob_with_cwd(capfd):
     os.chdir(starting_dir)
     stdout = '\n'.join([
         "__init__.py",
+        "__main__.py",
     ]) + "\n"
     cwd = os.path.join(os.getcwd(), 'plz')
 
