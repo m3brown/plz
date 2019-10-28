@@ -1,4 +1,4 @@
-from plz.main import main, execute_from_config
+from plz.main import main, execute_from_config, list_options
 import pytest
 import sys
 
@@ -14,6 +14,21 @@ def test_main_with_no_argument():
     # Assert
     with pytest.raises(SystemExit):
         main([])
+
+
+@patch('sys.exit')
+@patch('plz.main.plz_config')
+@patch('plz.main.list_options')
+def test_main_with_no_argument_call_list_options(mock_list, mock_config, mock_exit):
+    # Arrange
+    mock_config.return_value = (
+        [{'id': 'testcmd', 'cmd': 'derp'}],
+        None
+    )
+    # Act
+    main([])
+    # Assert
+    mock_list.assert_called_with(mock_config.return_value[0])
 
 
 @patch.object(sys, 'argv', ['/root/path/plz', 'testcmd', 'arg1', 'arg2'])
@@ -144,3 +159,21 @@ def test_execute_from_config_with_complex_cmd(mock_plz_config, mock_gather, mock
 
     # Assert
     mock_gather.assert_called_with(['derp', 'herp'], cwd=None, args=args)
+
+
+@patch('sys.exit')
+@patch('plz.main.list_options')
+@patch('plz.main.plz_config')
+def test_execute_from_config_with_invalid_cmd_calls_list_options(mock_plz_config, mock_list, mock_exit):
+    # Arrange
+    args = ['args']
+    mock_plz_config.return_value = (
+        [{'id': 'testcmd', 'cmd': 'derp'}],
+        None
+    )
+
+    # Act
+    execute_from_config('badcmd', args)
+
+    # Assert
+    mock_list.assert_called_with(mock_plz_config.return_value[0])
