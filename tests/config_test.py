@@ -1,19 +1,26 @@
-from plz.config import plz_config, load_config, git_root, NoFileException, InvalidYamlException
 from io import StringIO
+import sys
+
+from plz.config import git_root
+from plz.config import InvalidYamlException
+from plz.config import load_config
+from plz.config import NoFileException
+from plz.config import plz_config
 import pytest
 import sh
-import sys
 
 if sys.version_info.major > 2:
     from unittest.mock import patch, MagicMock, PropertyMock
-    builtins_module = 'builtins'
+
+    builtins_module = "builtins"
 else:
     from mock import patch, MagicMock, PropertyMock
-    builtins_module = '__builtin__'
+
+    builtins_module = "__builtin__"
 
 
-@patch('os.path.isfile')
-@patch('plz.config.load_config')
+@patch("os.path.isfile")
+@patch("plz.config.load_config")
 def test_plz_config_detects_local_file(mock_load_config, mock_isfile):
     # Arrange
     mock_isfile.return_value = True
@@ -22,15 +29,17 @@ def test_plz_config_detects_local_file(mock_load_config, mock_isfile):
     plz_config()
 
     # Assert
-    mock_load_config.assert_called_with('.plz.yaml')
+    mock_load_config.assert_called_with(".plz.yaml")
 
 
-@patch('os.path.isfile')
-@patch('plz.config.git_root')
-@patch('plz.config.load_config')
-def test_plz_config_falls_back_to_git_root_file(mock_load_config, mock_git_root, mock_isfile):
+@patch("os.path.isfile")
+@patch("plz.config.git_root")
+@patch("plz.config.load_config")
+def test_plz_config_falls_back_to_git_root_file(
+    mock_load_config, mock_git_root, mock_isfile
+):
     # Arrange
-    test_path = '/test/root/path'
+    test_path = "/test/root/path"
     mock_git_root.return_value = test_path
     mock_isfile.side_effect = [False, True]
 
@@ -38,15 +47,17 @@ def test_plz_config_falls_back_to_git_root_file(mock_load_config, mock_git_root,
     plz_config()
 
     # Assert
-    mock_load_config.assert_called_with('{}/.plz.yaml'.format(test_path))
+    mock_load_config.assert_called_with("{}/.plz.yaml".format(test_path))
 
 
-@patch('os.path.isfile')
-@patch('plz.config.git_root')
-@patch('plz.config.invalid_directory')
-def test_plz_config_aborts_if_empty_git_root(mock_invalid_directory, mock_git_root, mock_isfile):
+@patch("os.path.isfile")
+@patch("plz.config.git_root")
+@patch("plz.config.invalid_directory")
+def test_plz_config_aborts_if_empty_git_root(
+    mock_invalid_directory, mock_git_root, mock_isfile
+):
     # Arrange
-    mock_git_root.return_value = ''
+    mock_git_root.return_value = ""
     mock_isfile.return_value = False
 
     # Act
@@ -56,10 +67,12 @@ def test_plz_config_aborts_if_empty_git_root(mock_invalid_directory, mock_git_ro
     mock_invalid_directory.assert_called_once_with()
 
 
-@patch('os.path.isfile')
-@patch('plz.config.load_config')
-@patch('plz.config.invalid_yaml')
-def test_plz_config_aborts_if_InvalidYamlException(mock_invalid_yaml, mock_load_config, mock_isfile):
+@patch("os.path.isfile")
+@patch("plz.config.load_config")
+@patch("plz.config.invalid_yaml")
+def test_plz_config_aborts_if_InvalidYamlException(
+    mock_invalid_yaml, mock_load_config, mock_isfile
+):
     # Arrange
     mock_isfile.return_value = True
     mock_load_config.side_effect = InvalidYamlException("filename")
@@ -71,8 +84,8 @@ def test_plz_config_aborts_if_InvalidYamlException(mock_invalid_yaml, mock_load_
     mock_invalid_yaml.assert_called_once_with("filename")
 
 
-@patch('os.path.isfile')
-@patch('plz.config.git_root')
+@patch("os.path.isfile")
+@patch("plz.config.git_root")
 def test_plz_config_aborts_if_null_root(mock_git_root, mock_isfile):
     # Arrange
     mock_git_root.return_value = None
@@ -84,12 +97,14 @@ def test_plz_config_aborts_if_null_root(mock_git_root, mock_isfile):
         plz_config()
 
 
-@patch('os.path.isfile')
-@patch('plz.config.git_root')
-@patch('plz.config.load_config')
-def test_plz_config_handles_extra_trailing_slash(mock_load_config, mock_git_root, mock_isfile):
+@patch("os.path.isfile")
+@patch("plz.config.git_root")
+@patch("plz.config.load_config")
+def test_plz_config_handles_extra_trailing_slash(
+    mock_load_config, mock_git_root, mock_isfile
+):
     # Arrange
-    test_path = '/test/root/path'
+    test_path = "/test/root/path"
     mock_git_root.return_value = test_path + "/"
     mock_isfile.side_effect = [False, True]
 
@@ -97,46 +112,48 @@ def test_plz_config_handles_extra_trailing_slash(mock_load_config, mock_git_root
     plz_config()
 
     # Assert
-    mock_load_config.assert_called_with('{}/.plz.yaml'.format(test_path))
+    mock_load_config.assert_called_with("{}/.plz.yaml".format(test_path))
 
 
-@patch('{}.open'.format(builtins_module))
+@patch("{}.open".format(builtins_module))
 def test_load_config_loads_yaml_file(mock_open):
     # Arrange
-    mock_open.return_value = StringIO(u"""- id: run
+    mock_open.return_value = StringIO(
+        u"""- id: run
   name: runserver
   cmd: echo "./manage.py runserver"
-""")
-    expected_result = [{
-        "id": "run",
-        "name": "runserver",
-        "cmd": 'echo "./manage.py runserver"',
-    }]
+"""
+    )
+    expected_result = [
+        {"id": "run", "name": "runserver", "cmd": 'echo "./manage.py runserver"'}
+    ]
 
     # Act
-    result = load_config('path')
+    result = load_config("path")
 
     # Assert
-    assert(result == expected_result)
+    assert result == expected_result
 
 
-@patch('{}.open'.format(builtins_module))
+@patch("{}.open".format(builtins_module))
 def test_load_config_aborts_if_bad_yaml_file(mock_open):
     # Arrange
-    mock_open.return_value = StringIO(u"""- id: run
+    mock_open.return_value = StringIO(
+        u"""- id: run
   name: runserver
   cmd: echo "./manage.py runserver"
   foo
-""")
+"""
+    )
 
     # Act
     # Assert
     with pytest.raises(InvalidYamlException):
-        result = load_config('path')
+        load_config("path")
 
 
-@patch('sys.exit')
-@patch('sh.Command')
+@patch("sys.exit")
+@patch("sh.Command")
 def test_git_root_with_git_128_exception_raises_NoFileException(mock_sh, mock_exit):
     # Arrange
     mock_sh().side_effect = sh.ErrorReturnCode_128(b"", b"", b"")
@@ -147,11 +164,11 @@ def test_git_root_with_git_128_exception_raises_NoFileException(mock_sh, mock_ex
         git_root()
 
 
-@patch('sh.Command')
+@patch("sh.Command")
 def test_git_root_with_good_rc(mock_sh):
     # Arrange
     mock_sh_git = MagicMock()
-    mock_sh_git.__repr__ = lambda x: '/sample/path'
+    mock_sh_git.__repr__ = lambda x: "/sample/path"
     type(mock_sh_git).exit_code = PropertyMock(return_value=0)
     mock_sh().return_value = mock_sh_git
 
@@ -159,4 +176,4 @@ def test_git_root_with_good_rc(mock_sh):
     result = git_root()
 
     # Assert
-    assert result == '/sample/path'
+    assert result == "/sample/path"
