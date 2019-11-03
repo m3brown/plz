@@ -26,14 +26,7 @@ repos:
     - id: requirements-txt-fixer
     - id: trailing-whitespace
 
-# autoflake: remove unused imports
-- repo: git@github.com:humitos/mirrors-autoflake.git
-  rev: v1.3
-  hooks:
-    - id: autoflake
-      args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
-
-# python import sorting
+# python import sorting, remove unused imports
 -   repo: https://github.com/sqlalchemyorg/zimports/
     rev: 0.2.0
     hooks:

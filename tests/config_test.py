@@ -1,5 +1,6 @@
 from io import StringIO
 import sys
+import textwrap
 
 from plz.config import git_root
 from plz.config import InvalidYamlException
@@ -119,14 +120,14 @@ def test_plz_config_handles_extra_trailing_slash(
 def test_load_config_loads_yaml_file(mock_open):
     # Arrange
     mock_open.return_value = StringIO(
-        u"""- id: run
-  name: runserver
-  cmd: echo "./manage.py runserver"
-"""
+        textwrap.dedent(
+            """
+        - id: run
+          cmd: echo "./manage.py runserver"
+        """
+        )
     )
-    expected_result = [
-        {"id": "run", "name": "runserver", "cmd": 'echo "./manage.py runserver"'}
-    ]
+    expected_result = [{"id": "run", "cmd": 'echo "./manage.py runserver"'}]
 
     # Act
     result = load_config("path")
@@ -139,11 +140,13 @@ def test_load_config_loads_yaml_file(mock_open):
 def test_load_config_aborts_if_bad_yaml_file(mock_open):
     # Arrange
     mock_open.return_value = StringIO(
-        u"""- id: run
-  name: runserver
-  cmd: echo "./manage.py runserver"
-  foo
-"""
+        textwrap.dedent(
+            """
+        - id: run
+          cmd: echo "./manage.py runserver"
+          foo
+        """
+        )
     )
 
     # Act

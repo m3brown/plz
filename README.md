@@ -39,15 +39,12 @@ Suppose we have the following `.plz.yaml` file:
 
 ```yaml
 - id: run
-  name: runserver
   cmd: ./manage.py runserver
 - id: test
-  name: test code
   cmd:
   - ./manage.py test
   - yarn test
 - id: setup
-  name: setup apps
   cmd:
   - pipenv install
   - pipenv run ./manage.py migrate
