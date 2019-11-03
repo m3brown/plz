@@ -17,7 +17,7 @@ class InvalidYamlException(Exception):
     def __init__(self, *args, **kwargs):
         if len(args) == 1:
             setattr(self, "filename", args[0])
-        return super().__init__(*args, **kwargs)
+        return super(InvalidYamlException, self).__init__(*args, **kwargs)
 
 
 def invalid_directory():

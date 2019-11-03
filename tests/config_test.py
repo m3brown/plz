@@ -53,7 +53,7 @@ def test_plz_config_aborts_if_empty_git_root(mock_invalid_directory, mock_git_ro
     plz_config()
 
     # Assert
-    mock_invalid_directory.assert_called_once()
+    mock_invalid_directory.assert_called_once_with()
 
 
 @patch('os.path.isfile')
