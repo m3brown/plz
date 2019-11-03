@@ -5,6 +5,18 @@ import argparse
 import sys
 
 
+def usage():
+    print(Fore.BLUE + "Usage:\nplz <command> [<additional arguments> ...]")
+    print(Style.RESET_ALL)
+
+
+def list_options(config):
+    options = sorted([task['id'] for task in config])
+    print('Available commands from config:')
+    for cmd in options:
+        print(' - {cmd}'.format(cmd=cmd))
+
+
 def execute_from_config(cmd, args):
     (config, cwd) = plz_config()
 
@@ -13,8 +25,13 @@ def execute_from_config(cmd, args):
             if 'cmd' in task:
                 rc = gather_and_run_commands(task['cmd'], cwd=cwd, args=args)
                 sys.exit(rc)
-    print(Fore.RED + "Could not find command with id '{}', review the available options in the config file.".format(cmd))
-    print(Style.RESET_ALL)
+    if cmd and cmd.lower() == 'help':
+        usage()
+        list_options(config)
+    else:
+        print(Fore.RED + "Could not find command with id '{}'".format(cmd))
+        print(Style.RESET_ALL)
+        list_options(config)
     sys.exit(1)
 
 
@@ -22,9 +39,16 @@ def main(args=None):
     if args is None:
         args = sys.argv[1:]
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('cmd')
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('cmd', nargs='?', default='help')
     parser.add_argument('passthrough_args', nargs=argparse.REMAINDER)
+
+    if len(args) < 1:
+        (config, cwd) = plz_config()
+        print()
+        usage()
+        list_options(config)
+        sys.exit(1)
 
     args = parser.parse_args(args)
 
