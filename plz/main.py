@@ -10,6 +10,13 @@ def usage():
     print(Style.RESET_ALL)
 
 
+def invalid_directory():
+    print("plz must be run from a directory that has a plz.yaml file or from "
+          "within a git repo that contains a plz.yaml in the repo root path.")
+    print()
+    print("For more information, visit https://github.com/m3brown/plz")
+
+
 def list_options(config):
     options = sorted([task['id'] for task in config])
     print('Available commands from config:')
