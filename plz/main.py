@@ -1,25 +1,15 @@
 import argparse
 import sys
 
-from colorama import Fore
-from colorama import Style
+from plz.colorize import print_error
+from plz.colorize import print_info
 
 from .config import plz_config
 from .runner import gather_and_run_commands
 
 
 def usage():
-    print(Fore.BLUE + "Usage:\nplz <command> [<additional arguments> ...]")
-    print(Style.RESET_ALL)
-
-
-def invalid_directory():
-    print(
-        "plz must be run from a directory that has a plz.yaml file or from "
-        "within a git repo that contains a plz.yaml in the repo root path."
-    )
-    print()
-    print("For more information, visit https://github.com/m3brown/plz")
+    print_info("Usage:\nplz <command> [<additional arguments> ...]")
 
 
 def list_options(config):
@@ -27,6 +17,7 @@ def list_options(config):
     print("Available commands from config:")
     for cmd in options:
         print(" - {cmd}".format(cmd=cmd))
+    print()
 
 
 def execute_from_config(cmd, args):
@@ -41,8 +32,7 @@ def execute_from_config(cmd, args):
         usage()
         list_options(config)
     else:
-        print(Fore.RED + "Could not find command with id '{}'".format(cmd))
-        print(Style.RESET_ALL)
+        print_error("Could not find command with id '{}'".format(cmd))
         list_options(config)
     sys.exit(1)
 
@@ -56,7 +46,7 @@ def main(args=None):
     parser.add_argument("passthrough_args", nargs=argparse.REMAINDER)
 
     if len(args) < 1:
-        (config, cwd) = plz_config()
+        (config, _) = plz_config()
         print()
         usage()
         list_options(config)

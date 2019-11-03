@@ -1,10 +1,12 @@
 import os
 import shlex
+import textwrap
 
-from colorama import Fore
-from colorama import Style
 import sh
 
+from .colorize import print_error
+from .colorize import print_error_dim
+from .colorize import print_info_dim
 from .glob_tools import process_absolute_glob
 from .glob_tools import process_relative_glob
 
@@ -35,38 +37,38 @@ def gather_and_run_commands(cmd, cwd=None, args=[]):
     - If it's a list, recursively run each item in the list.
     """
     if type(cmd) == str:
-        print(
-            Fore.CYAN
-            + Style.DIM
-            + "==============================================================================="
+        print_info_dim(
+            textwrap.dedent(
+                """
+                ===============================================================================
+                Running command: {}
+                ===============================================================================
+                """.format(
+                    " ".join([cmd] + args)
+                )
+            )
         )
-        print("Running command: {}".format(cmd))
-        print(
-            "==============================================================================="
-        )
-        print(Style.RESET_ALL)
         rc = run_command(cmd, cwd=cwd, args=args)
+        print()
         if rc > 0:
-            print(Fore.RED)
-            print("[ERROR] Process failed")
+            print_error("Process failed", prefix=True)
         else:
-            print(Fore.CYAN + Style.DIM)
-            print("[INFO] Process complete")
-        print(Style.RESET_ALL)
+            print_info_dim("Process complete", prefix=True)
     elif type(cmd) == list:
         rc = 0
         for item in cmd:
             if rc > 0:
-                print(
-                    Fore.RED
-                    + Style.DIM
-                    + "==============================================================================="
+                print_error_dim(
+                    textwrap.dedent(
+                        """
+                        ===============================================================================
+                        Skipping command due to previous errors: '{}'
+                        ===============================================================================
+                        """.format(
+                            " ".join([item] + args)
+                        )
+                    )
                 )
-                print("Skipping command due to previous errors: '{}'".format(item))
-                print(
-                    "==============================================================================="
-                )
-                print(Style.RESET_ALL)
             else:
                 rc = gather_and_run_commands(item, cwd=cwd, args=args)
     else:

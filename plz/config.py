@@ -2,10 +2,11 @@ import os
 import sys
 import textwrap
 
-from colorama import Fore
-from colorama import Style
 import sh
 import yaml
+
+from .colorize import print_error
+from .colorize import print_info
 
 DOC_URL = "https://github.com/m3brown/plz"
 
@@ -23,34 +24,30 @@ class InvalidYamlException(Exception):
 
 def invalid_directory():
     print(
-        Fore.RED
-        + textwrap.dedent(
+        textwrap.dedent(
             """
-        plz must be run from:
-          a) a directory that has a valid plz.yaml file or
-          b) within a git repo that contains a plz.yaml in the repo root path.
+            plz must be run from:
+              a) a directory that has a valid plz.yaml file or
+              b) within a git repo that contains a plz.yaml in the repo root path.
 
-        For more information, visit {}
-        """
+            For more information, visit {}
+            """
         ).format(DOC_URL)
-        + Style.RESET_ALL
     )
     sys.exit(1)
 
 
 def invalid_yaml(filename):
-    print(
-        Fore.RED
-        + textwrap.dedent(
+    print_error(
+        textwrap.dedent(
             """
-        [ERROR] Error parsing yaml config: {}
+            Error parsing yaml config: {}
 
-        For more information on .plz.yaml formatting, visit {}
-        """.format(
+            For more information on .plz.yaml formatting, visit {}
+            """.format(
                 filename, DOC_URL
             )
         )
-        + Style.RESET_ALL
     )
     sys.exit(1)
 
@@ -66,9 +63,7 @@ def git_root():
 def load_config(filename):
     try:
         config = yaml.load(open(filename), Loader=yaml.SafeLoader)
-        print(Fore.CYAN)
-        print("[INFO] Using config: {}".format(filename))
-        print(Style.RESET_ALL)
+        print_info("Using config: {}".format(filename), prefix=True)
         return config
     except yaml.YAMLError as e:
         raise InvalidYamlException(filename)

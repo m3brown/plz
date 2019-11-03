@@ -1,5 +1,4 @@
 - id: publish
-  name: publish
   cmd:
   # Confirm we're on the master branch
   - bash -c "git rev-parse --abbrev-ref HEAD | xargs -I {} bash -c '[ {} == master ] || (echo Please checkout master branch for publishing && exit 1)'"
@@ -17,11 +16,9 @@
   - bash -c "python setup.py --version | xargs -I {} bash -c 'git tag -a {} -m {} && git push origin {}'"
 
 - id: test
-  name: test code
   cmd:
   - pipenv run pytest
 - id: setup
-  name: set up development environment
   cmd:
   - pipenv sync --dev
   - pipenv run pre-commit install
