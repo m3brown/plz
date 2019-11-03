@@ -1,6 +1,7 @@
-import glob
-from os.path import join, normpath
 from functools import partial
+import glob
+from os.path import join
+from os.path import normpath
 
 
 def safe_glob(cmd):
@@ -16,7 +17,7 @@ def safe_glob(cmd):
 
 def trim_prefix(file_path, prefix):
     if prefix and file_path.startswith(prefix):
-        file_path = file_path[len(prefix)+1:]
+        file_path = file_path[len(prefix) + 1 :]
     return file_path
 
 

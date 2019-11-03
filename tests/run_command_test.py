@@ -1,11 +1,12 @@
-from plz.runner import run_command
 import os
 from unittest import skip
 
+from plz.runner import run_command
+
 try:
-    from mock import patch, ANY
+    pass
 except ImportError:
-    from unittest.mock import patch, ANY
+    pass
 
 starting_dir = os.getcwd()
 
@@ -14,13 +15,13 @@ def test_run_command_returns_int():
     # Arrange
 
     # Act
-    result = run_command('echo test')
+    result = run_command("echo test")
 
     # Assert
-    assert(type(result) == int)
+    assert type(result) == int
 
 
-@skip('Error codes no longer supported')
+@skip("Error codes no longer supported")
 def test_run_command_returns_exit_code():
     # Arrange
 
@@ -28,24 +29,24 @@ def test_run_command_returns_exit_code():
     result = run_command('bash -c "exit 99"')
 
     # Assert
-    assert(result == 99)
+    assert result == 99
 
 
-@skip('returning output not currently supported')
+@skip("returning output not currently supported")
 def test_run_command_returns_output():
     # Arrange
-    stdout = '\n'.join(["1", "2", "3", "4"])
+    stdout = "\n".join(["1", "2", "3", "4"])
 
     # Act
     result = run_command('bash -c "for x in `seq 1 4`; do echo $x; done"')
 
     # Assert
-    assert(result[1] == stdout.split("\n"))
+    assert result[1] == stdout.split("\n")
 
 
 def test_run_command_prints_to_stdout(capfd):
     # Arrange
-    stdout = '\n'.join(["1", "2", "3", "4"]) + "\n"
+    stdout = "\n".join(["1", "2", "3", "4"]) + "\n"
 
     # Act
     run_command('bash -c "for x in `seq 1 4`; do echo $x; done"')
@@ -55,13 +56,12 @@ def test_run_command_prints_to_stdout(capfd):
     assert out == stdout
 
 
-@skip('stdout parameter not currently supported')
+@skip("stdout parameter not currently supported")
 def test_run_command_does_not_print_to_stdout_when_disabled(capfd):
     # Arrange
 
     # Act
-    run_command('bash -c "for x in `seq 1 4`; do echo $x; done"',
-                std_output=False)
+    run_command('bash -c "for x in `seq 1 4`; do echo $x; done"', std_output=False)
     out, err = capfd.readouterr()
 
     # Assert
@@ -70,12 +70,10 @@ def test_run_command_does_not_print_to_stdout_when_disabled(capfd):
 
 def test_run_command_simple_glob(capfd):
     # Arrange
-    stdout = '\n'.join([
-        "plz/__init__.py",
-    ]) + "\n"
+    stdout = "\n".join(["plz/__init__.py"]) + "\n"
 
     # Act
-    run_command('ls plz/__*.py')
+    run_command("ls plz/__*.py")
     out, err = capfd.readouterr()
 
     # Assert
@@ -92,13 +90,11 @@ def test_run_command_glob_with_cwd(capfd):
     """
     # Arrange
     os.chdir(starting_dir)
-    stdout = '\n'.join([
-        "__init__.py",
-    ]) + "\n"
-    cwd = os.path.join(os.getcwd(), 'plz')
+    stdout = "\n".join(["__init__.py"]) + "\n"
+    cwd = os.path.join(os.getcwd(), "plz")
 
     # Act
-    run_command('ls __*.py', cwd=cwd)
+    run_command("ls __*.py", cwd=cwd)
     out, err = capfd.readouterr()
 
     # Assert
@@ -117,14 +113,12 @@ def test_run_command_glob_with_cwd_and_args(capfd):
 
     # Arrange
     os.chdir(starting_dir)
-    stdout = '\n'.join([
-        "README.md",
-    ]) + "\n"
+    stdout = "\n".join(["README.md"]) + "\n"
     cwd = os.getcwd()
-    os.chdir('plz')
+    os.chdir("plz")
 
     # Act
-    run_command('ls', cwd=cwd, args=['../*.md'])
+    run_command("ls", cwd=cwd, args=["../*.md"])
     out, err = capfd.readouterr()
 
     # Assert

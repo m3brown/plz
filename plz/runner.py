@@ -1,10 +1,12 @@
 import os
-import subprocess
-import sh
 import shlex
-from itertools import chain
-from colorama import Fore, Style
-from .glob_tools import process_absolute_glob, process_relative_glob
+
+from colorama import Fore
+from colorama import Style
+import sh
+
+from .glob_tools import process_absolute_glob
+from .glob_tools import process_relative_glob
 
 
 def run_command(command, cwd=None, args=[]):
@@ -33,10 +35,15 @@ def gather_and_run_commands(cmd, cwd=None, args=[]):
     - If it's a list, recursively run each item in the list.
     """
     if type(cmd) == str:
-        print(Fore.CYAN + Style.DIM +
-              "===============================================================================")
+        print(
+            Fore.CYAN
+            + Style.DIM
+            + "==============================================================================="
+        )
         print("Running command: {}".format(cmd))
-        print("===============================================================================")
+        print(
+            "==============================================================================="
+        )
         print(Style.RESET_ALL)
         rc = run_command(cmd, cwd=cwd, args=args)
         if rc > 0:
@@ -50,11 +57,15 @@ def gather_and_run_commands(cmd, cwd=None, args=[]):
         rc = 0
         for item in cmd:
             if rc > 0:
-                print(Fore.RED + Style.DIM +
-                      "===============================================================================")
+                print(
+                    Fore.RED
+                    + Style.DIM
+                    + "==============================================================================="
+                )
                 print("Skipping command due to previous errors: '{}'".format(item))
                 print(
-                    "===============================================================================")
+                    "==============================================================================="
+                )
                 print(Style.RESET_ALL)
             else:
                 rc = gather_and_run_commands(item, cwd=cwd, args=args)

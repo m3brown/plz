@@ -1,10 +1,40 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
+# a list of available plugins is here:
+# https://pre-commit.com/hooks.html
+
+# black: python code linting
+-   repo: https://github.com/psf/black
+    rev: stable
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: autopep8-wrapper
-    -   id: check-yaml
-    -   id: debug-statements
-    -   id: name-tests-test
+    - id: black
+      language_version: python3
+
+# various code cleanup tasks
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+    - id: check-ast
+    - id: check-executables-have-shebangs
+    - id: check-merge-conflict
+    - id: check-yaml
+    - id: debug-statements
+    - id: detect-private-key
+    - id: detect-aws-credentials
+    - id: end-of-file-fixer
+    - id: mixed-line-ending
+    - id: name-tests-test
+    - id: requirements-txt-fixer
+    - id: trailing-whitespace
+
+# autoflake: remove unused imports
+- repo: git@github.com:humitos/mirrors-autoflake.git
+  rev: v1.3
+  hooks:
+    - id: autoflake
+      args: ['--in-place', '--remove-all-unused-imports', '--remove-unused-variable']
+
+# python import sorting
+-   repo: https://github.com/sqlalchemyorg/zimports/
+    rev: 0.2.0
+    hooks:
+    -   id: zimports

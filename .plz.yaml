@@ -25,3 +25,5 @@
   cmd:
   - pipenv sync --dev
   - pipenv run pre-commit install
+- id: lint
+  cmd: pipenv run pre-commit run --all-files
