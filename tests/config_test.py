@@ -68,7 +68,7 @@ def test_plz_config_aborts_if_InvalidYamlException(mock_invalid_yaml, mock_load_
     plz_config()
 
     # Assert
-    mock_invalid_yaml.assert_called_once()
+    mock_invalid_yaml.assert_called_once_with("filename")
 
 
 @patch('os.path.isfile')
