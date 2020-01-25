@@ -1,15 +1,31 @@
----
 dist: xenial
 language: python
 python:
-  - 2.7
-  - 3.5
-  - 3.6
-  - 3.7
-  - 3.8
+- 3.5
+- 3.6
+- 3.7
+- 3.8
 sudo: false
+env:
+  global:
+  - secure: C18In9KbWg4IBsj5FhMqn/OwpPRhkRF5WAGed6lPU0yIGt9iMOJ1/Eu0OUz9E9csVxoQO0eO0iFWApENF0W/RZ+qC0vwD1uD5mXmS8l9JkQOJFBctIRWA8Wv9oRsl/K5GGTCC+YIlKKfffGfH/nH5ts+1esC7WDQ7KOt5KUvfkyzZl0748Yeq8K/eW2fMQuZXdGLJO3eZBtq+QTTuhCign5e7gDiu3mUR4CA68pOK6mkzm9mtJfoE76wTmj4MRS3NksZ/od9LgKpmTBgPlWAV2vnKyAXJ0xha081AxbJ1VHowh8ZImYtonyuiGhjMUrZKy6pD8HTUj0fhi4bzs8Y5Ex6HOQdeQJAr40MBz1HZQqFnHZxC3ZJnehGyGEVAb1HxNuOr0lx79fCnjn7M9Pp/jAhcJOedFCpWvWBcvy5mHXl/BvBFJtNyLnL5tuWqSd8T3UGlEOuI0O7D0R4/35vr7yl0lV9QX32SuRP0lVAGVJA6LyPwGAGVvQ4rECE1XXbhe2CDVhJ6TG0bQ7m9jvMILDCRT8RECGDtsdq9eKQnJX0JVoB1H08XNuk3xiI1ggjB/kWgbtyFVr0VhDlhYyc/YTZp++YlgpUVqaYDCAGC1h0/PHb9Ke0tK0LEZD7oiwXf9mxfRrOU32nsLLa4+lvguBZ2W4SvJKZORN4Y9RPHA8=
+  - secure: cJhv+UoxYcDngRSJsgJHory08yQCT/tjCrxObSqN961PLpDyxtGVHGfk6ABQxDRcXGCxrCkhxNJEF0YllHxeWm5MX7EoJXORH/wDXeNWet40gkVGqOb8xTDmyAAZU3dXP0+jGxizzIcFkb3WSGNAigcpmtlVayydvJmIBM3jljkqoTDoW80Vajs85Xlzd5BZxdeeArBwLs22oA5HZzFvkq5LL1549Pnp/9gVPNpKQxP6hBwQQp8ACJVSJe2mKq2JT0dlRHQPumlte+uKSitf15uKqaNtNNdiQx7ACFSYI1N1ybqrdrhSLx4Y2Ty2PT08cOub7cQc8qC8U6HWkwNOqqxvCxn0jA1LAK95GDNIQ1DIKXIlDBy38Y75Tf3jSfiazVo+M028pYq8oAUDucwnWVHZ2IvjnpE6rnPapWuuozGkluMimncaacMEAk6DRWbM90fJuLBhV9yFXq7er5DD8bM2Hu45qxyKhMjAWdZ/nek6Cip1NevGkYP99IvVoU46duC8px64a8ci4PendZM8kNOch7v9LMJ4+Ydk2O96TjasTvWuS0/bqTHJJYXFCU9luHhzjqOP/OaN/gmdL1g70umqh9DuTg2n8bq/AGmWGAAPYRe0SzJfuY3q6SfWz05p3z0Mxtcw6+6ilEBmJoRwjGBbBrDwFXM87psi04kE2nU=
+before_install:
+- pip install poetry
+- pip install coveralls
+- pip install tox-travis
 install:
-  - pipenv sync --dev
+- poetry install
 script: tox
 after_success:
-  - coveralls
+- coveralls
+before_deploy:
+- poetry config http-basic.pypi $PYPI_USER $PYPI_PASSWORD
+- poetry build
+deploy:
+  provider: script
+  script: poetry publish
+  skip_cleanup: true
+  on:
+    tags: true
+    condition: "$TRAVIS_PYTHON_VERSION == 3.8" # only push to pypi once
