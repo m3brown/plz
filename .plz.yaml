@@ -9,7 +9,7 @@
   # Confirm all tests are passing
   - bash -c "plz test || (echo Please fix the tests and try again && exit 1)"
   # Create tag and push to remote origin
-  - bash -c "python setup.py --version | xargs -I {} bash -c 'git tag -a {} -m {} && git push origin {}'"
+  - bash -c "poetry version | awk '{print $2}' | xargs -I {} bash -c 'git tag -a {} -m {} && git push origin {}'"
 
 - id: test
   cmd:
