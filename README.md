@@ -46,8 +46,8 @@ Suppose we have the following `.plz.yaml` file:
   - yarn test
 - id: setup
   cmd:
-  - pipenv install
-  - pipenv run ./manage.py migrate
+  - poetry install
+  - poetry run ./manage.py migrate
   - yarn install
 - id: ls
   cmd: ls
