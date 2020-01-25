@@ -3,9 +3,9 @@
   # Confirm we're on the master branch
   - bash -c "git rev-parse --abbrev-ref HEAD | xargs -I {} bash -c '[ {} == master ] || (echo Please checkout master branch for publishing && exit 1)'"
   # Confirm we're up to date with remote origin
-  - bash -c "git fetch origin; git diff --quiet -- ...remotes/origin/HEAD || (echo Please fetch latest commits from origin && exit 1)"
+  - bash -c "git fetch origin; [ `git rev-list HEAD...origin/master --count` = 0 ] || (echo Please fetch latest commits from origin && exit 1)"
   # Confirm there aren not any local, uncommitted changes
-  - bash -c "git diff-index --quiet HEAD -- || (echo Please revert or PR local changes to origin && exit 1)"
+  - bash -c "git diff-index --name-status --exit-code HEAD || (echo Please revert or PR local changes to origin && exit 1)"
   # Confirm all tests are passing
   - bash -c "plz test || (echo Please fix the tests and try again && exit 1)"
   # Create tag and push to remote origin
