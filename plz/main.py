@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 
 from plz.colorize import print_error
@@ -26,6 +27,8 @@ def execute_from_config(cmd, args):
     for task in config:
         if "id" in task and task["id"] == cmd:
             if "cmd" in task:
+                if "dir" in task:
+                    cwd = os.path.join(cwd or "", task["dir"])
                 rc = gather_and_run_commands(task["cmd"], cwd=cwd, args=args)
                 sys.exit(rc)
     if cmd and cmd.lower() == "help":

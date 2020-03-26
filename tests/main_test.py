@@ -89,6 +89,24 @@ def test_execute_from_config_with_valid_cmd(mock_plz_config, mock_gather, mock_e
 @patch("sys.exit")
 @patch("plz.main.gather_and_run_commands")
 @patch("plz.main.plz_config")
+def test_execute_from_config_with_dir(mock_plz_config, mock_gather, mock_exit):
+    # Arrange
+    args = ["args"]
+    mock_plz_config.return_value = (
+        [{"id": "testcmd", "cmd": "derp", "dir": "foo"}],
+        None,
+    )
+
+    # Act
+    execute_from_config("testcmd", args)
+
+    # Assert
+    mock_gather.assert_called_with("derp", cwd="foo", args=args)
+
+
+@patch("sys.exit")
+@patch("plz.main.gather_and_run_commands")
+@patch("plz.main.plz_config")
 def test_execute_from_config_with_valid_cmd_and_cwd(
     mock_plz_config, mock_gather, mock_exit
 ):
@@ -102,6 +120,25 @@ def test_execute_from_config_with_valid_cmd_and_cwd(
 
     # Assert
     mock_gather.assert_called_with("derp", cwd=cwd, args=args)
+
+
+@patch("sys.exit")
+@patch("plz.main.gather_and_run_commands")
+@patch("plz.main.plz_config")
+def test_execute_from_config_with_cwd_and_dir(mock_plz_config, mock_gather, mock_exit):
+    # Arrange
+    args = ["args"]
+    cwd = "/root/path"
+    mock_plz_config.return_value = (
+        [{"id": "testcmd", "cmd": "derp", "dir": "foo"}],
+        cwd,
+    )
+
+    # Act
+    execute_from_config("testcmd", args)
+
+    # Assert
+    mock_gather.assert_called_with("derp", cwd="/root/path/foo", args=args)
 
 
 @patch("sys.exit")
