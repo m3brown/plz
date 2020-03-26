@@ -8,6 +8,7 @@
   - bash -c "git diff-index --name-status --exit-code HEAD || (echo Please revert or PR local changes to origin && exit 1)"
   # Confirm all tests are passing
   - bash -c "plz test || (echo Please fix the tests and try again && exit 1)"
+  - poetry publish --build
   # Create tag and push to remote origin
   - bash -c "poetry version | awk '{print $2}' | xargs -I {} bash -c 'git tag -a {} -m {} && git push origin {}'"
 
