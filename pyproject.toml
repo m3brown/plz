@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "plz-cmd"
-version = "0.8.1"
+version = "0.9.0"
 description = "command line app for running configurable shell commands"
 readme = "README.md"
 authors = ["Mike Brown <mike.brown@excella.com>"]
@@ -17,7 +17,6 @@ plz = "plz.main:main"
 python = "^3.5"
 colorama = "^0.4"
 PyYAML = ">=3.0"
-sh = "^1.12"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3"
