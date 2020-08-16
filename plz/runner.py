@@ -1,8 +1,7 @@
 import os
 import shlex
+import subprocess
 import textwrap
-
-import sh
 
 from .colorize import print_error
 from .colorize import print_error_dim
@@ -21,10 +20,8 @@ def run_command(command, cwd=None, args=[]):
         args = list(process_relative_glob(args, post_adjust_path=relpath))
     executable = cleaned_cmd[0]
     try:
-        if cwd != pwd:
-            os.chdir(cwd)
-        sh.Command(executable)(*(cleaned_cmd[1:] + args), _fg=True)
-    except sh.ErrorReturnCode:
+        subprocess.check_call(cleaned_cmd + args, cwd=cwd)
+    except subprocess.CalledProcessError:
         return 1
     return 0
 

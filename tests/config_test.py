@@ -1,4 +1,5 @@
 from io import StringIO
+import subprocess
 import sys
 import textwrap
 
@@ -8,7 +9,6 @@ from plz.config import load_config
 from plz.config import NoFileException
 from plz.config import plz_config
 import pytest
-import sh
 
 if sys.version_info.major > 2:
     from unittest.mock import patch, MagicMock, PropertyMock
@@ -156,10 +156,14 @@ def test_load_config_aborts_if_bad_yaml_file(mock_open):
 
 
 @patch("sys.exit")
-@patch("sh.Command")
-def test_git_root_with_git_128_exception_raises_NoFileException(mock_sh, mock_exit):
+@patch("subprocess.check_output")
+def test_git_root_with_git_128_exception_raises_NoFileException(
+    mock_check_output, mock_exit
+):
     # Arrange
-    mock_sh().side_effect = sh.ErrorReturnCode_128(b"", b"", b"")
+    mock_check_output.side_effect = subprocess.CalledProcessError(
+        returncode=128, cmd="cmd"
+    )
 
     # Act
     # Assert
@@ -167,13 +171,10 @@ def test_git_root_with_git_128_exception_raises_NoFileException(mock_sh, mock_ex
         git_root()
 
 
-@patch("sh.Command")
-def test_git_root_with_good_rc(mock_sh):
+@patch("subprocess.check_output")
+def test_git_root_with_good_rc(mock_check_output):
     # Arrange
-    mock_sh_git = MagicMock()
-    mock_sh_git.__repr__ = lambda x: "/sample/path"
-    type(mock_sh_git).exit_code = PropertyMock(return_value=0)
-    mock_sh().return_value = mock_sh_git
+    mock_check_output.return_value = "/sample/path"
 
     # Act
     result = git_root()

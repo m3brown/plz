@@ -1,8 +1,8 @@
 import os
+import subprocess
 import sys
 import textwrap
 
-import sh
 import yaml
 
 from .colorize import print_error
@@ -54,10 +54,13 @@ def invalid_yaml(filename):
 
 def git_root():
     try:
-        output = sh.Command("git")("rev-parse", "--show-toplevel")
+        output = subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
         return str(output).strip()
-    except sh.ErrorReturnCode_128:
-        raise NoFileException()
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 128:
+            raise NoFileException()
+        else:
+            raise e
 
 
 def load_config(filename):
