@@ -38,6 +38,7 @@ executed relative to that directory, not the current directory.
 Suppose we have the following `.plz.yaml` file:
 
 ```yaml
+commands:
 - id: run
   cmd: ./manage.py runserver
 - id: test

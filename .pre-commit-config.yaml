@@ -4,14 +4,26 @@ repos:
 
 # black: python code linting
 -   repo: https://github.com/psf/black
-    rev: stable
+    rev: 21.11b1
     hooks:
     - id: black
       language_version: python3
 
+- repo: https://github.com/hadialqattan/pycln
+  rev: v1.1.0
+  hooks:
+    - id: pycln
+      args: [--config=pyproject.toml]
+
+- repo: https://github.com/timothycrosley/isort
+  rev: 5.10.1
+  hooks:
+    - id: isort
+      additional_dependencies: [toml]
+
 # various code cleanup tasks
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v4.0.1
     hooks:
     - id: check-ast
     - id: check-executables-have-shebangs
@@ -20,14 +32,9 @@ repos:
     - id: debug-statements
     - id: detect-private-key
     - id: detect-aws-credentials
+      args: [--allow-missing-credentials]
     - id: end-of-file-fixer
     - id: mixed-line-ending
     - id: name-tests-test
     - id: requirements-txt-fixer
     - id: trailing-whitespace
-
-# python import sorting, remove unused imports
--   repo: https://github.com/sqlalchemyorg/zimports/
-    rev: 0.2.0
-    hooks:
-    -   id: zimports

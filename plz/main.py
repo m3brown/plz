@@ -2,8 +2,7 @@ import argparse
 import os
 import sys
 
-from plz.colorize import print_error
-from plz.colorize import print_info
+from plz.colorize import print_error, print_info
 
 from .config import plz_config
 from .runner import gather_and_run_commands
@@ -14,7 +13,7 @@ def usage():
 
 
 def list_options(config):
-    options = sorted([task["id"] for task in config])
+    options = sorted([task["id"] for task in config["commands"]])
     print("Available commands from config:")
     for cmd in options:
         print(" - {cmd}".format(cmd=cmd))
@@ -24,7 +23,7 @@ def list_options(config):
 def execute_from_config(cmd, args):
     (config, cwd) = plz_config()
 
-    for task in config:
+    for task in config["commands"]:
         if "id" in task and task["id"] == cmd:
             if "cmd" in task:
                 if "dir" in task:

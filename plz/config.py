@@ -5,8 +5,8 @@ import textwrap
 
 import yaml
 
-from .colorize import print_error
-from .colorize import print_info
+from .colorize import print_error, print_info
+from .schema import validate_configuration_data
 
 DOC_URL = "https://github.com/m3brown/plz"
 
@@ -66,6 +66,7 @@ def git_root():
 def load_config(filename):
     try:
         config = yaml.load(open(filename), Loader=yaml.SafeLoader)
+        validate_configuration_data(config)
         print_info("Using config: {}".format(filename), prefix=True)
         return config
     except yaml.YAMLError as e:

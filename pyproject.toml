@@ -14,16 +14,24 @@ packages = [
 plz = "plz.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.7"
 colorama = "^0.4"
+jsonschema = "^4.2.0"
 PyYAML = ">=3.0"
 
 [tool.poetry.dev-dependencies]
+pre-commit = "^1.21"
 pytest = "^5.3"
 pytest-cov = "^2.8"
 tox = "^3.14"
-pre-commit = "^1.21"
 
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pycln]
+all = true

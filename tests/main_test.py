@@ -1,8 +1,8 @@
 import sys
 
-from plz.main import execute_from_config
-from plz.main import main
 import pytest
+
+from plz.main import execute_from_config, main
 
 try:
     from mock import patch
@@ -18,12 +18,17 @@ def test_main_with_no_argument():
         main([])
 
 
+def get_sample_config(**overrides):
+    return {"commands": [{"id": "testcmd", "cmd": "derp", **overrides}]}
+
+
 @patch("sys.exit")
 @patch("plz.main.plz_config")
 @patch("plz.main.list_options")
 def test_main_with_no_argument_call_list_options(mock_list, mock_config, mock_exit):
     # Arrange
-    mock_config.return_value = ([{"id": "testcmd", "cmd": "derp"}], None)
+    config = get_sample_config()
+    mock_config.return_value = (config, None)
     # Act
     main([])
     # Assert
@@ -77,7 +82,8 @@ def test_main_with_several_passthrough_arguments(mock_execute):
 def test_execute_from_config_with_valid_cmd(mock_plz_config, mock_gather, mock_exit):
     # Arrange
     args = ["args"]
-    mock_plz_config.return_value = ([{"id": "testcmd", "cmd": "derp"}], None)
+    config = get_sample_config()
+    mock_plz_config.return_value = (config, None)
 
     # Act
     execute_from_config("testcmd", args)
@@ -92,8 +98,9 @@ def test_execute_from_config_with_valid_cmd(mock_plz_config, mock_gather, mock_e
 def test_execute_from_config_with_dir(mock_plz_config, mock_gather, mock_exit):
     # Arrange
     args = ["args"]
+    config = get_sample_config(dir="foo")
     mock_plz_config.return_value = (
-        [{"id": "testcmd", "cmd": "derp", "dir": "foo"}],
+        config,
         None,
     )
 
@@ -113,7 +120,8 @@ def test_execute_from_config_with_valid_cmd_and_cwd(
     # Arrange
     args = ["args"]
     cwd = "/root/path"
-    mock_plz_config.return_value = ([{"id": "testcmd", "cmd": "derp"}], cwd)
+    config = get_sample_config()
+    mock_plz_config.return_value = (config, cwd)
 
     # Act
     execute_from_config("testcmd", args)
@@ -129,8 +137,9 @@ def test_execute_from_config_with_cwd_and_dir(mock_plz_config, mock_gather, mock
     # Arrange
     args = ["args"]
     cwd = "/root/path"
+    config = get_sample_config(dir="foo")
     mock_plz_config.return_value = (
-        [{"id": "testcmd", "cmd": "derp", "dir": "foo"}],
+        config,
         cwd,
     )
 
@@ -146,7 +155,8 @@ def test_execute_from_config_with_cwd_and_dir(mock_plz_config, mock_gather, mock
 def test_execute_from_config_with_invalid_cmd(mock_plz_config, mock_exit):
     # Arrange
     args = ["args"]
-    mock_plz_config.return_value = ([{"id": "testcmd", "cmd": "derp"}], None)
+    config = get_sample_config()
+    mock_plz_config.return_value = (config, None)
 
     # Act
     execute_from_config("badcmd", args)
@@ -162,7 +172,10 @@ def test_execute_from_config_with_valid_cmd_with_no_inner_cmd(
 ):
     # Arrange
     args = ["args"]
-    mock_plz_config.return_value = ([{"id": "testcmd", "noncmd": "derp"}], None)
+    config = get_sample_config()
+    config["commands"][0].pop("cmd")
+    config["commands"][0]["noncmd"] = "derp"
+    mock_plz_config.return_value = (config, None)
 
     # Act
     execute_from_config("testcmd", args)
@@ -177,7 +190,8 @@ def test_execute_from_config_with_valid_cmd_with_no_inner_cmd(
 def test_execute_from_config_with_complex_cmd(mock_plz_config, mock_gather, mock_exit):
     # Arrange
     args = ["args"]
-    mock_plz_config.return_value = ([{"id": "testcmd", "cmd": ["derp", "herp"]}], None)
+    config = get_sample_config(cmd=["derp", "herp"])
+    mock_plz_config.return_value = (config, None)
 
     # Act
     execute_from_config("testcmd", args)
@@ -194,7 +208,8 @@ def test_execute_from_config_with_invalid_cmd_calls_list_options(
 ):
     # Arrange
     args = ["args"]
-    mock_plz_config.return_value = ([{"id": "testcmd", "cmd": "derp"}], None)
+    config = get_sample_config()
+    mock_plz_config.return_value = (config, None)
 
     # Act
     execute_from_config("badcmd", args)

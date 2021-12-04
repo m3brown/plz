@@ -1,7 +1,6 @@
-from functools import partial
 import glob
-from os.path import join
-from os.path import normpath
+from functools import partial
+from os.path import join, normpath
 
 
 def safe_glob(cmd):

@@ -1,21 +1,24 @@
-from io import StringIO
 import subprocess
 import sys
 import textwrap
+from io import StringIO
 
-from plz.config import git_root
-from plz.config import InvalidYamlException
-from plz.config import load_config
-from plz.config import NoFileException
-from plz.config import plz_config
 import pytest
 
+from plz.config import (
+    InvalidYamlException,
+    NoFileException,
+    git_root,
+    load_config,
+    plz_config,
+)
+
 if sys.version_info.major > 2:
-    from unittest.mock import patch, MagicMock, PropertyMock
+    from unittest.mock import patch
 
     builtins_module = "builtins"
 else:
-    from mock import patch, MagicMock, PropertyMock
+    from mock import patch
 
     builtins_module = "__builtin__"
 
@@ -122,12 +125,15 @@ def test_load_config_loads_yaml_file(mock_open):
     mock_open.return_value = StringIO(
         textwrap.dedent(
             u"""
+            commands:
             - id: run
               cmd: echo "./manage.py runserver"
             """
         )
     )
-    expected_result = [{"id": "run", "cmd": 'echo "./manage.py runserver"'}]
+    expected_result = {
+        "commands": [{"id": "run", "cmd": 'echo "./manage.py runserver"'}]
+    }
 
     # Act
     result = load_config("path")
