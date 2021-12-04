@@ -27,8 +27,8 @@ jobs:
     - name: Install poetry ${{ matrix.poetry-version }}
       run: |
         python -m ensurepip
-        python -m pip install --upgrade pip
-        python -m pip install poetry==${{ matrix.poetry-version }}
+        pip install --upgrade pip
+        pip install poetry==${{ matrix.poetry-version }}
 
     - name: Install dependencies
       run: poetry install
@@ -39,18 +39,17 @@ jobs:
       run: |
         poetry run python -m pytest --cov=plz --cov-fail-under 60
 
-    - name: Coveralls Parallel
+    - name: Convert coverage to lcov
+      # We only need to generate coverage once
+      if: matrix.python-version == '3.9'
+      run: |
+        pip install coveragepy-lcov
+        coveragepy-lcov
+
+    - name: Coveralls
+      # We only need to generate coverage once
+      if: matrix.python-version == '3.9'
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        flag-name: run=${{ matrix.test_number }}
-        parallel: true
-
-  finish:
-    needs: build
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github_action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
+        path-to-lcov: "./lcov.info"
