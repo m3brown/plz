@@ -27,8 +27,8 @@ jobs:
     - name: Install poetry ${{ matrix.poetry-version }}
       run: |
         python -m ensurepip
-        python -m pip install --upgrade pip
-        python -m pip install poetry==${{ matrix.poetry-version }}
+        pip install --upgrade pip
+        pip install poetry==${{ matrix.poetry-version }}
 
     - name: Install dependencies
       run: poetry install
@@ -38,11 +38,14 @@ jobs:
         PYTHONPATH: "."
       run: |
         poetry run python -m pytest --cov=plz --cov-fail-under 60
+        pip install coveragepy-lcov
+        coveragepy-lcov
 
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: "./lcov.info"
         flag-name: run=${{ matrix.test_number }}
         parallel: true
 
