@@ -38,23 +38,18 @@ jobs:
         PYTHONPATH: "."
       run: |
         poetry run python -m pytest --cov=plz --cov-fail-under 60
+
+    - name: Convert coverage to lcov
+      # We only need to generate coverage once
+      if: matrix.python-version == '3.9'
+      run: |
         pip install coveragepy-lcov
         coveragepy-lcov
 
-    - name: Coveralls Parallel
+    - name: Coveralls
+      # We only need to generate coverage once
+      if: matrix.python-version == '3.9'
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: "./lcov.info"
-        flag-name: run=${{ matrix.test_number }}
-        parallel: true
-
-  finish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github_action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
