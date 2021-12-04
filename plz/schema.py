@@ -15,8 +15,13 @@ command_schema = {
 }
 
 schema = {
-    "type": "array",
-    "items": command_schema,
+    "type": "object",
+    "properties": {
+        "commands": {
+            "type": "array",
+            "items": command_schema,
+        }
+    },
 }
 
 

@@ -5,16 +5,18 @@ from plz.schema import validate_configuration_data
 
 
 def get_sample_schema():
-    return [
-        {
-            "id": "test",
-            "cmd": "poetry run python -m pytest",
-        },
-        {
-            "id": "setup",
-            "cmd": "poetry install",
-        },
-    ]
+    return {
+        "commands": [
+            {
+                "id": "test",
+                "cmd": "poetry run python -m pytest",
+            },
+            {
+                "id": "setup",
+                "cmd": "poetry install",
+            },
+        ]
+    }
 
 
 def test_validate_happy_path_succeeds():
@@ -31,7 +33,7 @@ def test_validate_happy_path_succeeds():
 def test_validate_command_array_succeeds():
     # Arrange
     schema = get_sample_schema()
-    schema[0]["cmd"] = [
+    schema["commands"][0]["cmd"] = [
         "poetry install",
         "poetry run pre-commit install",
     ]
@@ -46,7 +48,7 @@ def test_validate_command_array_succeeds():
 def test_validate_command_without_id_fails():
     # Arrange
     schema = get_sample_schema()
-    schema[0].pop("id")
+    schema["commands"][0].pop("id")
 
     # Act
     with pytest.raises(ValidationError) as error_info:
@@ -59,7 +61,7 @@ def test_validate_command_without_id_fails():
 def test_validate_command_without_cmd_fails():
     # Arrange
     schema = get_sample_schema()
-    schema[0].pop("cmd")
+    schema["commands"][0].pop("cmd")
 
     # Act
     with pytest.raises(ValidationError) as error_info:
