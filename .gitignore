@@ -1,3 +1,4 @@
+.DS_Store
 .vscode
 __pycache__
 *.pyc
@@ -5,6 +6,7 @@ plz_cmd.egg-info
 .pytest_cache
 *.swp
 .coverage
+lcov.info
 .tox
 dist/
 build/
