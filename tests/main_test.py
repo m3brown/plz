@@ -1,8 +1,8 @@
 import sys
 
-from plz.main import execute_from_config
-from plz.main import main
 import pytest
+
+from plz.main import execute_from_config, main
 
 try:
     from mock import patch

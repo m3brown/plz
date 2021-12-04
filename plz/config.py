@@ -5,8 +5,7 @@ import textwrap
 
 import yaml
 
-from .colorize import print_error
-from .colorize import print_info
+from .colorize import print_error, print_info
 from .schema import validate_configuration_data
 
 DOC_URL = "https://github.com/m3brown/plz"

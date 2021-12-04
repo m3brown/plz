@@ -2,8 +2,7 @@ import argparse
 import os
 import sys
 
-from plz.colorize import print_error
-from plz.colorize import print_info
+from plz.colorize import print_error, print_info
 
 from .config import plz_config
 from .runner import gather_and_run_commands

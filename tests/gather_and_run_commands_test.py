@@ -1,10 +1,11 @@
-from plz.runner import gather_and_run_commands
 import pytest
 
+from plz.runner import gather_and_run_commands
+
 try:
-    from mock import patch, call
+    from mock import call, patch
 except ImportError:
-    from unittest.mock import patch, call
+    from unittest.mock import call, patch
 
 
 @patch("plz.runner.run_command")

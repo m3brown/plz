@@ -1,6 +1,7 @@
-from jsonschema.exceptions import ValidationError
-from plz.schema import validate_configuration_data
 import pytest
+from jsonschema.exceptions import ValidationError
+
+from plz.schema import validate_configuration_data
 
 
 def get_sample_schema():

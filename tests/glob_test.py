@@ -1,6 +1,4 @@
-from plz.glob_tools import absolute_glob
-from plz.glob_tools import relative_glob
-from plz.glob_tools import safe_glob
+from plz.glob_tools import absolute_glob, relative_glob, safe_glob
 
 try:
     from mock import patch

@@ -1,5 +1,4 @@
-from colorama import Fore
-from colorama import Style
+from colorama import Fore, Style
 
 ERROR = Fore.RED
 ERROR_DIM = Fore.RED + Style.DIM
