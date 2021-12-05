@@ -14,20 +14,17 @@ packages = [
 plz = "plz.main:main"
 
 [tool.poetry.dependencies]
-python = "^2.7 || ^3.5"
+python = "^3.5"
 colorama = "^0.4"
 jsonschema = [
-    {version = "^3.2.0", python = "<=3.6"},
+    {version = "^3.2.0", python = "^3.5 || ^3.6"},
     {version = "^4.2.0", python = ">=3.7"}
 ]
 PyYAML = ">=3.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^1.21"
-pytest = [
-    {version = "^4.6.0", python = "^2.7"},
-    {version = "^5.3", python = ">=3.5"}
-]
+pytest = "^5.3"
 pytest-cov = "^2.8"
 tox = "^3.14"
 
