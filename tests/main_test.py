@@ -1,9 +1,10 @@
 import sys
 from unittest.mock import ANY, patch
+import textwrap
 
 import pytest
 
-from plz.main import compile_environment, execute_from_config, main, os
+from plz.main import compile_environment, execute_from_config, main, os, command_detail
 
 
 def test_main_with_no_argument():
@@ -28,7 +29,52 @@ def test_main_with_no_argument_call_list_options(mock_list, mock_config, mock_ex
     # Act
     main([])
     # Assert
-    mock_list.assert_called_with(mock_config.return_value[0])
+    mock_list.assert_called_with(config)
+
+
+@patch("sys.exit")
+@patch("plz.main.plz_config")
+@patch("plz.main.list_options")
+def test_main_with_help_argument_call_list_options(mock_list, mock_config, mock_exit):
+    # Arrange
+    config = get_sample_config()
+    mock_config.return_value = (config, None)
+    # Act
+    main(["help"])
+    # Assert
+    mock_list.assert_called_with(config)
+
+
+@patch("sys.exit")
+@patch("plz.main.plz_config")
+@patch("plz.main.command_detail")
+def test_main_with_help_argument_and_command_name_calls_command_detail(
+    mock_detail, mock_config, mock_exit
+):
+    # Arrange
+    config = get_sample_config()
+    mock_config.return_value = (config, None)
+    # Act
+    main(["help", config["commands"][0]["id"]])
+    # Assert
+    mock_detail.assert_called_with(config["commands"][0])
+
+
+@patch("sys.exit")
+@patch("plz.main.plz_config")
+@patch("plz.main.list_options")
+@patch("plz.main.command_detail")
+def test_main_with_help_argument_and_bad_command_name_calls_list_options(
+    mock_detail, mock_list_options, mock_config, mock_exit
+):
+    # Arrange
+    config = get_sample_config()
+    mock_config.return_value = (config, None)
+    # Act
+    main(["help", "foo"])
+    # Assert
+    mock_detail.assert_not_called()
+    mock_list_options.assert_called_with(config)
 
 
 @patch.object(sys, "argv", ["/root/path/plz", "testcmd", "arg1", "arg2"])
@@ -263,3 +309,22 @@ def test_compile_environment(os_environ, global_env, cmd_env, expected_result):
 
     # Assert
     assert result == expected_result
+
+def test_command_detail_prints_to_stdout(capfd):
+    # Arrange
+    command = {"id": "foo", "cmd": ["derp", "herp"]}
+
+    # Act
+    command_detail(command)
+    out, err = capfd.readouterr()
+
+    # Assert
+    assert out == textwrap.dedent(
+        """
+        id: foo
+        cmd:
+        - derp
+        - herp
+
+    """
+    )
