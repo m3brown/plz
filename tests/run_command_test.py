@@ -68,6 +68,18 @@ def test_run_command_does_not_print_to_stdout_when_disabled(capfd):
     assert out == ""
 
 
+def test_run_command_accepts_env(capfd):
+    # Arrange
+    test_value = "this is a test"
+
+    # Act
+    run_command('bash -c "echo $FOO"', env={"FOO": test_value})
+    out, err = capfd.readouterr()
+
+    # Assert
+    assert out == f"{test_value}\n"
+
+
 def test_run_command_simple_glob(capfd):
     # Arrange
     stdout = "\n".join(["plz/__init__.py"]) + "\n"
