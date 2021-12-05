@@ -2,6 +2,7 @@ from colorama import Fore, Style
 
 ERROR = Fore.RED
 ERROR_DIM = Fore.RED + Style.DIM
+WARNING = Fore.YELLOW
 INFO = Fore.CYAN
 INFO_DIM = Fore.CYAN + Style.DIM
 RESET = Style.RESET_ALL
@@ -20,6 +21,11 @@ def print_error(text, prefix=False):
 def print_error_dim(text, prefix=False):
     prefix_string = "ERROR" if prefix else None
     return __print_text(text, ERROR_DIM, prefix_string)
+
+
+def print_warning(text, prefix=False):
+    prefix_string = "WARNING" if prefix else None
+    return __print_text(text, WARNING, prefix_string)
 
 
 def print_info(text, prefix=False):

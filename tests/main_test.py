@@ -1,22 +1,14 @@
 import sys
-from unittest.mock import ANY, patch
 import textwrap
+from unittest.mock import ANY, patch
 
 import pytest
 
-from plz.main import compile_environment, execute_from_config, main, os, command_detail
-
-
-def test_main_with_no_argument():
-    # Arrange
-    # Act
-    # Assert
-    with pytest.raises(SystemExit):
-        main([])
+from plz import main
 
 
 def get_sample_config(**overrides):
-    return {"commands": [{"id": "testcmd", "cmd": "derp", **overrides}]}
+    return {"commands": {"testcmd": {"cmd": "derp", **overrides}}}
 
 
 @patch("sys.exit")
@@ -27,7 +19,7 @@ def test_main_with_no_argument_call_list_options(mock_list, mock_config, mock_ex
     config = get_sample_config()
     mock_config.return_value = (config, None)
     # Act
-    main([])
+    main.main([])
     # Assert
     mock_list.assert_called_with(config)
 
@@ -40,7 +32,7 @@ def test_main_with_help_argument_call_list_options(mock_list, mock_config, mock_
     config = get_sample_config()
     mock_config.return_value = (config, None)
     # Act
-    main(["help"])
+    main.main(["help"])
     # Assert
     mock_list.assert_called_with(config)
 
@@ -55,9 +47,9 @@ def test_main_with_help_argument_and_command_name_calls_command_detail(
     config = get_sample_config()
     mock_config.return_value = (config, None)
     # Act
-    main(["help", config["commands"][0]["id"]])
+    main.main(["help", "testcmd"])
     # Assert
-    mock_detail.assert_called_with(config["commands"][0])
+    mock_detail.assert_called_with("testcmd", config["commands"]["testcmd"])
 
 
 @patch("sys.exit")
@@ -71,7 +63,7 @@ def test_main_with_help_argument_and_bad_command_name_calls_list_options(
     config = get_sample_config()
     mock_config.return_value = (config, None)
     # Act
-    main(["help", "foo"])
+    main.main(["help", "foo"])
     # Assert
     mock_detail.assert_not_called()
     mock_list_options.assert_called_with(config)
@@ -82,7 +74,7 @@ def test_main_with_help_argument_and_bad_command_name_calls_list_options(
 def test_main_with_sys_argv_parsing(mock_execute):
     # Arrange
     # Act
-    main()
+    main.main()
 
     # Assert
     mock_execute.assert_called_with("testcmd", ["arg1", "arg2"])
@@ -92,7 +84,7 @@ def test_main_with_sys_argv_parsing(mock_execute):
 def test_main_with_single_argument(mock_execute):
     # Arrange
     # Act
-    main(["testcmd"])
+    main.main(["testcmd"])
 
     # Assert
     mock_execute.assert_called_with("testcmd", [])
@@ -102,7 +94,7 @@ def test_main_with_single_argument(mock_execute):
 def test_main_with_passthrough_argument(mock_execute):
     # Arrange
     # Act
-    main(["testcmd", "arg1"])
+    main.main(["testcmd", "arg1"])
 
     # Assert
     mock_execute.assert_called_with("testcmd", ["arg1"])
@@ -112,7 +104,7 @@ def test_main_with_passthrough_argument(mock_execute):
 def test_main_with_several_passthrough_arguments(mock_execute):
     # Arrange
     # Act
-    main(["testcmd", "arg1", "arg2", "arg3"])
+    main.main(["testcmd", "arg1", "arg2", "arg3"])
 
     # Assert
     mock_execute.assert_called_with("testcmd", ["arg1", "arg2", "arg3"])
@@ -128,7 +120,7 @@ def test_execute_from_config_with_valid_cmd(mock_plz_config, mock_gather, mock_e
     mock_plz_config.return_value = (config, None)
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_gather.assert_called_with("derp", cwd=None, args=args)
@@ -147,7 +139,7 @@ def test_execute_from_config_with_dir(mock_plz_config, mock_gather, mock_exit):
     )
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_gather.assert_called_with("derp", cwd="foo", args=args)
@@ -166,7 +158,7 @@ def test_execute_from_config_with_valid_cmd_and_cwd(
     mock_plz_config.return_value = (config, cwd)
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_gather.assert_called_with("derp", cwd=cwd, args=args)
@@ -186,7 +178,7 @@ def test_execute_from_config_with_cwd_and_dir(mock_plz_config, mock_gather, mock
     )
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_gather.assert_called_with("derp", cwd="/root/path/foo", args=args)
@@ -206,7 +198,7 @@ def test_execute_from_config_passes_env_dict_if_defined(
     mock_compile_environment.return_value = {"foo": "bar"}
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_gather.assert_called_with(ANY, cwd=ANY, args=ANY, env={"foo": "bar"})
@@ -221,7 +213,7 @@ def test_execute_from_config_with_invalid_cmd(mock_plz_config, mock_exit):
     mock_plz_config.return_value = (config, None)
 
     # Act
-    execute_from_config("badcmd", args)
+    main.execute_from_config("badcmd", args)
 
     # Assert
     mock_exit.assert_called_with(1)
@@ -235,12 +227,12 @@ def test_execute_from_config_with_valid_cmd_with_no_inner_cmd(
     # Arrange
     args = ["args"]
     config = get_sample_config()
-    config["commands"][0].pop("cmd")
-    config["commands"][0]["noncmd"] = "derp"
+    cmd = config["commands"]["testcmd"]
+    cmd["noncmd"] = cmd.pop("cmd")
     mock_plz_config.return_value = (config, None)
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_exit.assert_called_with(1)
@@ -256,7 +248,7 @@ def test_execute_from_config_with_complex_cmd(mock_plz_config, mock_gather, mock
     mock_plz_config.return_value = (config, None)
 
     # Act
-    execute_from_config("testcmd", args)
+    main.execute_from_config("testcmd", args)
 
     # Assert
     mock_gather.assert_called_with(["derp", "herp"], cwd=None, args=args)
@@ -274,7 +266,7 @@ def test_execute_from_config_with_invalid_cmd_calls_list_options(
     mock_plz_config.return_value = (config, None)
 
     # Act
-    execute_from_config("badcmd", args)
+    main.execute_from_config("badcmd", args)
 
     # Assert
     mock_list.assert_called_with(mock_plz_config.return_value[0])
@@ -304,27 +296,51 @@ def test_execute_from_config_with_invalid_cmd_calls_list_options(
 def test_compile_environment(os_environ, global_env, cmd_env, expected_result):
     # Arrange
     # Act
-    with patch.dict(os.environ, os_environ, clear=True):
-        result = compile_environment(cmd_env, global_env)
+    with patch.dict(main.os.environ, os_environ, clear=True):
+        result = main.compile_environment(cmd_env, global_env)
 
     # Assert
     assert result == expected_result
 
+
 def test_command_detail_prints_to_stdout(capfd):
     # Arrange
-    command = {"id": "foo", "cmd": ["derp", "herp"]}
+    config = {"commands": {"foo": {"cmd": ["derp", "herp"]}}}
 
     # Act
-    command_detail(command)
+    main.command_detail("foo", config["commands"]["foo"])
     out, err = capfd.readouterr()
 
     # Assert
     assert out == textwrap.dedent(
         """
-        id: foo
-        cmd:
-        - derp
-        - herp
+        foo:
+          cmd:
+          - derp
+          - herp
 
     """
+    )
+
+
+def test_list_options_prints_output(capfd):
+    # Arrange
+    config = get_sample_config()
+    config["commands"]["bar"] = {"cmd": "baz"}
+
+    # Act
+    main.list_options(config)
+    out, err = capfd.readouterr()
+
+    # Assert
+    assert (
+        out
+        == textwrap.dedent(
+            """
+        Available commands from config:
+         - testcmd
+         - bar
+
+    """
+        ).lstrip()
     )

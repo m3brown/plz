@@ -1,24 +1,24 @@
 commands:
-- id: publish
-  cmd:
-  # Confirm we're on the master branch
-  - bash -c "git rev-parse --abbrev-ref HEAD | xargs -I {} bash -c '[ {} == master ] || (echo Please checkout master branch for publishing && exit 1)'"
-  # Confirm we're up to date with remote origin
-  - bash -c "git fetch origin; [ `git rev-list HEAD...origin/master --count` = 0 ] || (echo Please fetch latest commits from origin && exit 1)"
-  # Confirm there aren not any local, uncommitted changes
-  - bash -c "git diff-index --name-status --exit-code HEAD || (echo Please revert or PR local changes to origin && exit 1)"
-  # Confirm all tests are passing
-  - bash -c "plz test || (echo Please fix the tests and try again && exit 1)"
-  - poetry publish --build
-  # Create tag and push to remote origin
-  - bash -c "poetry version | awk '{print $2}' | xargs -I {} bash -c 'git tag -a {} -m {} && git push origin {}'"
+  publish:
+    cmd:
+    # Confirm we're on the master branch
+    - bash -c "git rev-parse --abbrev-ref HEAD | xargs -I {} bash -c '[ {} == master ] || (echo Please checkout master branch for publishing && exit 1)'"
+    # Confirm we're up to date with remote origin
+    - bash -c "git fetch origin; [ `git rev-list HEAD...origin/master --count` = 0 ] || (echo Please fetch latest commits from origin && exit 1)"
+    # Confirm there aren not any local, uncommitted changes
+    - bash -c "git diff-index --name-status --exit-code HEAD || (echo Please revert or PR local changes to origin && exit 1)"
+    # Confirm all tests are passing
+    - bash -c "plz test || (echo Please fix the tests and try again && exit 1)"
+    - poetry publish --build
+    # Create tag and push to remote origin
+    - bash -c "poetry version | awk '{print $2}' | xargs -I {} bash -c 'git tag -a {} -m {} && git push origin {}'"
 
-- id: test
-  cmd:
-  - poetry run python -m pytest
-- id: setup
-  cmd:
-  - poetry install
-  - poetry run pre-commit install
-- id: lint
-  cmd: poetry run pre-commit run --all-files
+  test:
+    cmd:
+    - poetry run python -m pytest
+  setup:
+    cmd:
+    - poetry install
+    - poetry run pre-commit install
+  lint:
+    cmd: poetry run pre-commit run --all-files

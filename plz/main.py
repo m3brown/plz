@@ -16,10 +16,10 @@ def usage():
 
 
 def list_options(config):
-    options = sorted([task["id"] for task in config["commands"]])
+    options = config["commands"].keys()
     print("Available commands from config:")
     for cmd in options:
-        print(" - {cmd}".format(cmd=cmd))
+        print(" - {}".format(cmd))
     print()
 
 
@@ -30,38 +30,36 @@ def compile_environment(cmd_env: Optional[dict], global_env: Optional[dict]) -> 
         return {}
 
 
-def command_detail(command):
+def command_detail(key, data):
     print()
-    id = command.pop("id")
-    print("id: {}".format(id))
-    print(yaml.dump(command))
+    print(yaml.dump({key: data}))
 
 
 def execute_from_config(cmd, args):
     (config, cwd) = plz_config()
 
-    for task in config["commands"]:
-        if "id" in task and task["id"] == cmd:
-            if "cmd" in task:
-                if "dir" in task:
-                    cwd = os.path.join(cwd or "", task["dir"])
-                kwargs = {
-                    "cwd": cwd,
-                    "args": args,
-                }
-                env = compile_environment(
-                    task.get("env", {}), global_env=config.get("global_env", {})
-                )
-                if env:
-                    kwargs["env"] = env
-                rc = gather_and_run_commands(task["cmd"], **kwargs)
-                sys.exit(rc)
+    data = config["commands"].get(cmd, None)
+    if data:
+        if "cmd" in data.keys():
+            if "dir" in data.keys():
+                cwd = os.path.join(cwd or "", data["dir"])
+            kwargs = {
+                "cwd": cwd,
+                "args": args,
+            }
+            env = compile_environment(
+                data.get("env", {}), global_env=config.get("global_env", {})
+            )
+            if env:
+                kwargs["env"] = env
+            rc = gather_and_run_commands(data["cmd"], **kwargs)
+            sys.exit(rc)
     if cmd and cmd.lower() == "help":
         if len(args) == 1:
-            for task in config["commands"]:
-                if "id" in task and task["id"] == args[0]:
-                    command_detail(task)
-                    sys.exit(0)
+            data = config["commands"].get(args[0], None)
+            if data:
+                command_detail(args[0], data)
+                sys.exit(0)
 
         usage()
         list_options(config)
