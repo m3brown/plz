@@ -62,6 +62,27 @@ plz test
 plz setup
 ```
 
+### Getting help
+
+List all the available commands with:
+
+```bash
+plz
+# or
+plz help
+```
+
+Print the yaml schema for any defined command with `plz help <command>`:
+
+```
+> plz help test
+[INFO] Using config: plz.yaml
+
+id: test
+cmd:
+- poetry run python -m pytest
+```
+
 ### Environment variables
 
 Environment variables can be set for an individual command or globally for all commands.
@@ -84,7 +105,6 @@ commands:
 - id: run
   cmd: ./manage.py runserver
 ```
-
 
 ### Globbing
 

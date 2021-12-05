@@ -3,6 +3,8 @@ import os
 import sys
 from typing import Optional
 
+import yaml
+
 from plz.colorize import print_error, print_info
 
 from .config import plz_config
@@ -28,6 +30,13 @@ def compile_environment(cmd_env: Optional[dict], global_env: Optional[dict]) -> 
         return {}
 
 
+def command_detail(command):
+    print()
+    id = command.pop("id")
+    print("id: {}".format(id))
+    print(yaml.dump(command))
+
+
 def execute_from_config(cmd, args):
     (config, cwd) = plz_config()
 
@@ -48,8 +57,15 @@ def execute_from_config(cmd, args):
                 rc = gather_and_run_commands(task["cmd"], **kwargs)
                 sys.exit(rc)
     if cmd and cmd.lower() == "help":
+        if len(args) == 1:
+            for task in config["commands"]:
+                if "id" in task and task["id"] == args[0]:
+                    command_detail(task)
+                    sys.exit(0)
+
         usage()
         list_options(config)
+        sys.exit(0)
     else:
         print_error("Could not find command with id '{}'".format(cmd))
         list_options(config)

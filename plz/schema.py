@@ -52,6 +52,8 @@ def validate_configuration_data(parsed_data):
         integer_message = "expected string or bytes-like object"
         if str(e) == integer_message:
             raise exceptions.ValidationError(
-                f"Parsing exception: '{integer_message}'. Confirm all integer values in the .plz.yaml config are wrapped in quotes."
+                "Parsing exception: '{}'. Confirm all integer values in the .plz.yaml config are wrapped in quotes.".format(
+                    integer_message
+                )
             )
         raise e
