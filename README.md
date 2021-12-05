@@ -39,19 +39,19 @@ Suppose we have the following `plz.yaml` file:
 
 ```yaml
 commands:
-- id: run
-  cmd: ./manage.py runserver
-- id: test
-  cmd:
-  - ./manage.py test
-  - yarn test
-- id: setup
-  cmd:
-  - poetry install
-  - poetry run ./manage.py migrate
-  - yarn install
-- id: ls
-  cmd: ls
+  run:
+    cmd: ./manage.py runserver
+  test:
+    cmd:
+    - ./manage.py test
+    - yarn test
+  setup:
+    cmd:
+    - poetry install
+    - poetry run ./manage.py migrate
+    - yarn install
+  ls:
+    cmd: ls
 ```
 
 The following commands would be available:
@@ -78,9 +78,9 @@ Print the yaml schema for any defined command with `plz help <command>`:
 > plz help test
 [INFO] Using config: plz.yaml
 
-id: test
-cmd:
-- poetry run python -m pytest
+test:
+  cmd:
+  - poetry run python -m pytest
 ```
 
 ### Environment variables
@@ -90,20 +90,20 @@ Environment variables can be set for an individual command or globally for all c
 ```yaml
 # env variable for an individual command
 commands:
-- id: run
-  cmd: ./manage.py runserver
-- id: test
-  cmd: ./manage.py test
-  env:
-    DJANGO_SETTINGS_MODULE: myapp.settings.test
+  run:
+    cmd: ./manage.py runserver
+  test:
+    cmd: ./manage.py test
+    env:
+      DJANGO_SETTINGS_MODULE: myapp.settings.test
 ```
 
 ```yaml
 global_env:
   ACCESS_TOKEN: 12345
 commands:
-- id: run
-  cmd: ./manage.py runserver
+  run:
+    cmd: ./manage.py runserver
 ```
 
 ### Globbing
