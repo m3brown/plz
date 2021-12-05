@@ -142,16 +142,14 @@ def test_load_config_loads_yaml_file(mock_open):
     # Arrange
     mock_open.return_value = StringIO(
         textwrap.dedent(
-            u"""
+            """
             commands:
-            - id: run
-              cmd: echo "./manage.py runserver"
+              run:
+                cmd: echo "./manage.py runserver"
             """
         )
     )
-    expected_result = {
-        "commands": [{"id": "run", "cmd": 'echo "./manage.py runserver"'}]
-    }
+    expected_result = {"commands": {"run": {"cmd": 'echo "./manage.py runserver"'}}}
 
     # Act
     result = load_config("path")
@@ -165,10 +163,11 @@ def test_load_config_aborts_if_bad_yaml_file(mock_open):
     # Arrange
     mock_open.return_value = StringIO(
         textwrap.dedent(
-            u"""
-            - id: run
-              cmd: echo "./manage.py runserver"
-              foo
+            """
+            commands:
+              run:
+                cmd: echo "./manage.py runserver"
+                foo
             """
         )
     )

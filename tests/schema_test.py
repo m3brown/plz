@@ -6,16 +6,14 @@ from plz.schema import validate_configuration_data
 
 def get_sample_schema():
     return {
-        "commands": [
-            {
-                "id": "test",
+        "commands": {
+            "test": {
                 "cmd": "poetry run python -m pytest",
             },
-            {
-                "id": "setup",
+            "setup": {
                 "cmd": "poetry install",
             },
-        ]
+        }
     }
 
 
@@ -33,7 +31,7 @@ def test_validate_happy_path_succeeds():
 def test_validate_command_array_succeeds():
     # Arrange
     schema = get_sample_schema()
-    schema["commands"][0]["cmd"] = [
+    schema["commands"]["test"]["cmd"] = [
         "poetry install",
         "poetry run pre-commit install",
     ]
@@ -45,35 +43,24 @@ def test_validate_command_array_succeeds():
     pass  # exception was not raised
 
 
-def test_validate_command_without_id_fails():
-    # Arrange
-    schema = get_sample_schema()
-    schema["commands"][0].pop("id")
-
-    # Act
-    with pytest.raises(ValidationError) as error_info:
-        validate_configuration_data(schema)
-
-    # Assert
-    assert error_info.value.message == "'id' is a required property"
-
-
 @pytest.mark.parametrize(
     "id,expect_pass",
     [
         ["foo", True],
         ["foo1", True],
         ["1foo", True],
+        ["1", True],
+        [1, False],
         ["foo_bar", True],
         ["foo-bar", True],
+        ["foo.bar", False],
         ["foo bar", False],
         [" foo", False],
     ],
 )
 def test_validate_command_id(id, expect_pass):
     # Arrange
-    schema = get_sample_schema()
-    schema["commands"][0]["id"] = id
+    schema = {"commands": {id: {"cmd": "test command"}}}
 
     # Act
     if expect_pass:
@@ -86,7 +73,7 @@ def test_validate_command_id(id, expect_pass):
 def test_validate_command_without_cmd_fails():
     # Arrange
     schema = get_sample_schema()
-    schema["commands"][0].pop("cmd")
+    schema["commands"]["test"].pop("cmd")
 
     # Act
     with pytest.raises(ValidationError) as error_info:
@@ -123,7 +110,7 @@ def test_validate_env(key, value, expect_pass, is_global):
     if is_global:
         schema["global_env"] = {key: value}
     else:
-        schema["commands"][0]["env"] = {key: value}
+        schema["commands"]["test"]["env"] = {key: value}
 
     # Act
     if expect_pass:
