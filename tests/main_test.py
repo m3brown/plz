@@ -326,7 +326,6 @@ def test_command_detail_prints_to_stdout(capfd):
 def test_list_options_prints_output(capfd):
     # Arrange
     config = get_sample_config()
-    config["commands"]["bar"] = {"cmd": "baz"}
 
     # Act
     main.list_options(config)
@@ -339,7 +338,6 @@ def test_list_options_prints_output(capfd):
             """
         Available commands from config:
          - testcmd
-         - bar
 
     """
         ).lstrip()
