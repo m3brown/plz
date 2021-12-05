@@ -84,7 +84,7 @@ def test_run_command_glob_with_cwd(capfd):
     """
     Integration test
 
-    Scenario: the .plz.yaml file is "located" in the plz directory.
+    Scenario: the plz.yaml file is "located" in the plz directory.
 
     In this case, the user will be running something like: `plz ls`
     """
@@ -105,7 +105,7 @@ def test_run_command_glob_with_cwd_and_args(capfd):
     """
     Integration test
 
-    Scenario: the .plz.yaml file is "located" in the root of this repo, but
+    Scenario: the plz.yaml file is "located" in the root of this repo, but
     the command is run from the child plz directory.
 
     In this case, the user will be running something like: `plz ls ../*.md`

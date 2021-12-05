@@ -28,14 +28,14 @@ pip install plz-cmd
 
 ### Example
 
-plz looks for a `.plz.yaml` file either in the current directory or in the root
+plz looks for a `plz.yaml` file either in the current directory or in the root
 of the git repo you're currently in. This file can (and should) be checked into
 version control.
 
-For a .plz.yaml file located in the git root directory, commands run will be
+For a plz.yaml file located in the git root directory, commands run will be
 executed relative to that directory, not the current directory.
 
-Suppose we have the following `.plz.yaml` file:
+Suppose we have the following `plz.yaml` file:
 
 ```yaml
 commands:
@@ -80,26 +80,26 @@ the current directory when running the command. Using this repo as an example:
 
 ```
 bash$ ls .*.yaml
-.plz.yaml               .pre-commit-config.yaml
+plz.yaml               .pre-commit-config.yaml
 
 bash$ cd plz
 
 bash$ plz ls ../.*.yaml
 
-[INFO] Using config: /path/plz/.plz.yaml
+[INFO] Using config: /path/plz/plz.yaml
 
 ===============================================================================
 Running command: ls
 ===============================================================================
 
-.plz.yaml
+plz.yaml
 .pre-commit-config.yaml
 
 [INFO] Process complete, return code: 0
 
 bash$ plz ls __*.py
 
-[INFO] Using config: /path/plz/.plz.yaml
+[INFO] Using config: /path/plz/plz.yaml
 
 ===============================================================================
 Running command: ls
