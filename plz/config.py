@@ -43,7 +43,7 @@ def invalid_yaml(filename):
             """
             Error parsing yaml config: {}
 
-            For more information on .plz.yaml formatting, visit {}
+            For more information on plz.yaml formatting, visit {}
             """.format(
                 filename, DOC_URL
             )
@@ -73,17 +73,28 @@ def load_config(filename):
         raise InvalidYamlException(filename)
 
 
+def find_file(filename):
+    if os.path.isfile(filename):
+        return (filename, None)
+    else:
+        root = git_root().rstrip("/")
+        full_path = os.path.join(root, filename)
+        if os.path.isfile(full_path):
+            return (full_path, root)
+
+
 def plz_config():
-    filename = ".plz.yaml"
     try:
-        if os.path.isfile(filename):
-            return (load_config(filename), None)
-        else:
-            root = git_root().rstrip("/")
-            full_path = os.path.join(root, filename)
-            if os.path.isfile(full_path):
-                return (load_config(full_path), root)
-            raise NoFileException
+        match = find_file("plz.yaml")
+        if not match:
+            match = find_file(".plz.yaml")
+            if match:
+                print_error(
+                    "DEPRECATION WARNING: Please rename '.plz.yaml' to 'plz.yaml'"
+                )
+            else:
+                raise NoFileException
+        return (load_config(match[0]), match[1])
     except NoFileException:
         invalid_directory()
     except InvalidYamlException as e:

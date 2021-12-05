@@ -33,7 +33,7 @@ def test_plz_config_detects_local_file(mock_load_config, mock_isfile):
     plz_config()
 
     # Assert
-    mock_load_config.assert_called_with(".plz.yaml")
+    mock_load_config.assert_called_with("plz.yaml")
 
 
 @patch("os.path.isfile")
@@ -51,7 +51,25 @@ def test_plz_config_falls_back_to_git_root_file(
     plz_config()
 
     # Assert
-    mock_load_config.assert_called_with("{}/.plz.yaml".format(test_path))
+    mock_load_config.assert_called_with("{}/plz.yaml".format(test_path))
+
+
+@patch("os.path.isfile")
+@patch("plz.config.git_root")
+@patch("plz.config.load_config")
+def test_plz_config_falls_back_to_legacy_filename(
+    mock_load_config, mock_git_root, mock_isfile
+):
+    # Arrange
+    mock_isfile.side_effect = [False, False, True]
+    mock_git_root.return_value = "git"
+
+    # Act
+    plz_config()
+
+    # Assert
+    assert mock_isfile.call_count == 3
+    mock_load_config.assert_called_with(".plz.yaml")
 
 
 @patch("os.path.isfile")
@@ -116,7 +134,7 @@ def test_plz_config_handles_extra_trailing_slash(
     plz_config()
 
     # Assert
-    mock_load_config.assert_called_with("{}/.plz.yaml".format(test_path))
+    mock_load_config.assert_called_with("{}/plz.yaml".format(test_path))
 
 
 @patch("{}.open".format(builtins_module))
