@@ -20,6 +20,7 @@ command_schema = {
         "env": env_variable_dict,
     },
     "required": ["cmd"],
+    "additionalProperties": False,
 }
 
 schema = {

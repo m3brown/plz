@@ -178,6 +178,26 @@ def test_load_config_aborts_if_bad_yaml_file(mock_open):
         load_config("path")
 
 
+@patch("{}.open".format(builtins_module))
+def test_load_config_aborts_if_file_does_not_match_schema(mock_open):
+    # Arrange
+    mock_open.return_value = StringIO(
+        textwrap.dedent(
+            """
+            commands:
+              run:
+                cmd: echo "./manage.py runserver"
+                foo: bar
+            """
+        )
+    )
+
+    # Act
+    # Assert
+    with pytest.raises(InvalidYamlException):
+        load_config("path")
+
+
 @patch("sys.exit")
 @patch("subprocess.check_output")
 def test_git_root_with_git_128_exception_raises_NoFileException(
