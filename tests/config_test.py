@@ -56,6 +56,24 @@ def test_plz_config_falls_back_to_git_root_file(
 
 @patch("os.path.isfile")
 @patch("plz.config.git_root")
+@patch("plz.config.load_config")
+def test_plz_config_falls_back_to_legacy_filename(
+    mock_load_config, mock_git_root, mock_isfile
+):
+    # Arrange
+    mock_isfile.side_effect = [False, False, True]
+    mock_git_root.return_value = "git"
+
+    # Act
+    plz_config()
+
+    # Assert
+    assert mock_isfile.call_count == 3
+    mock_load_config.assert_called_with(".plz.yaml")
+
+
+@patch("os.path.isfile")
+@patch("plz.config.git_root")
 @patch("plz.config.invalid_directory")
 def test_plz_config_aborts_if_empty_git_root(
     mock_invalid_directory, mock_git_root, mock_isfile
