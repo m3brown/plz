@@ -14,9 +14,12 @@ packages = [
 plz = "plz.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.5"
 colorama = "^0.4"
-jsonschema = "^4.2.0"
+jsonschema = [
+    {version = "^3.2.0", python = "^3.5 || ^3.6"},
+    {version = "^4.2.0", python = ">=3.7"}
+]
 PyYAML = ">=3.0"
 
 [tool.poetry.dev-dependencies]
