@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from typing import Optional
 
 from plz.colorize import print_error, print_info
 
@@ -20,6 +21,13 @@ def list_options(config):
     print()
 
 
+def compile_environment(cmd_env: Optional[dict], global_env: Optional[dict]) -> dict:
+    if cmd_env or global_env:
+        return {**os.environ.copy(), **global_env, **cmd_env}
+    else:
+        return {}
+
+
 def execute_from_config(cmd, args):
     (config, cwd) = plz_config()
 
@@ -28,7 +36,16 @@ def execute_from_config(cmd, args):
             if "cmd" in task:
                 if "dir" in task:
                     cwd = os.path.join(cwd or "", task["dir"])
-                rc = gather_and_run_commands(task["cmd"], cwd=cwd, args=args)
+                kwargs = {
+                    "cwd": cwd,
+                    "args": args,
+                }
+                env = compile_environment(
+                    task.get("env", {}), global_env=config.get("global_env", {})
+                )
+                if env:
+                    kwargs["env"] = env
+                rc = gather_and_run_commands(task["cmd"], **kwargs)
                 sys.exit(rc)
     if cmd and cmd.lower() == "help":
         usage()
