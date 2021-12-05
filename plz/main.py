@@ -29,10 +29,11 @@ def compile_environment(cmd_env: Optional[dict], global_env: Optional[dict]) -> 
     else:
         return {}
 
+
 def command_detail(command):
     print()
     id = command.pop("id")
-    print(f"id: {id}")
+    print("id: {}".format(id))
     print(yaml.dump(command))
 
 
