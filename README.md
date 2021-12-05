@@ -62,6 +62,30 @@ plz test
 plz setup
 ```
 
+### Environment variables
+
+Environment variables can be set for an individual command or globally for all commands.
+
+```yaml
+# env variable for an individual command
+commands:
+- id: run
+  cmd: ./manage.py runserver
+- id: test
+  cmd: ./manage.py test
+  env:
+    DJANGO_SETTINGS_MODULE: myapp.settings.test
+```
+
+```yaml
+global_env:
+  ACCESS_TOKEN: 12345
+commands:
+- id: run
+  cmd: ./manage.py runserver
+```
+
+
 ### Globbing
 
 plz supports asterisk expansion.  For example, the cmd `ls *.py` will work as expected.

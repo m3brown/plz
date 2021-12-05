@@ -1,13 +1,9 @@
 import sys
+from unittest.mock import ANY, patch
 
 import pytest
 
-from plz.main import execute_from_config, main
-
-try:
-    from mock import patch
-except ImportError:
-    from unittest.mock import patch
+from plz.main import compile_environment, execute_from_config, main, os
 
 
 def test_main_with_no_argument():
@@ -151,6 +147,26 @@ def test_execute_from_config_with_cwd_and_dir(mock_plz_config, mock_gather, mock
 
 
 @patch("sys.exit")
+@patch("plz.main.gather_and_run_commands")
+@patch("plz.main.plz_config")
+@patch("plz.main.compile_environment")
+def test_execute_from_config_passes_env_dict_if_defined(
+    mock_compile_environment, mock_plz_config, mock_gather, mock_exit
+):
+    # Arrange
+    args = ["args"]
+    config = get_sample_config()
+    mock_plz_config.return_value = (config, None)
+    mock_compile_environment.return_value = {"foo": "bar"}
+
+    # Act
+    execute_from_config("testcmd", args)
+
+    # Assert
+    mock_gather.assert_called_with(ANY, cwd=ANY, args=ANY, env={"foo": "bar"})
+
+
+@patch("sys.exit")
 @patch("plz.main.plz_config")
 def test_execute_from_config_with_invalid_cmd(mock_plz_config, mock_exit):
     # Arrange
@@ -216,3 +232,34 @@ def test_execute_from_config_with_invalid_cmd_calls_list_options(
 
     # Assert
     mock_list.assert_called_with(mock_plz_config.return_value[0])
+
+
+@pytest.mark.parametrize(
+    "os_environ,global_env,cmd_env,expected_result",
+    [
+        [
+            {"foo": "bar"},
+            {"baz": "buz"},
+            {"derp": "herp"},
+            {"foo": "bar", "baz": "buz", "derp": "herp"},
+        ],
+        [{}, {"baz": "buz"}, {"derp": "herp"}, {"baz": "buz", "derp": "herp"}],
+        [{"foo": "bar"}, {}, {"derp": "herp"}, {"foo": "bar", "derp": "herp"}],
+        [{"foo": "bar"}, {"baz": "buz"}, {}, {"foo": "bar", "baz": "buz"}],
+        [{"foo": "A"}, {"foo": "B"}, {"foo": "C"}, {"foo": "C"}],
+        [{"foo": "A"}, {"foo": "B"}, {}, {"foo": "B"}],
+        [{"foo": "A"}, {}, {"foo": "C"}, {"foo": "C"}],
+        [{}, {"foo": "B"}, {"foo": "C"}, {"foo": "C"}],
+        [{"foo": "A"}, {}, {}, {}],
+        [{}, {"foo": "B"}, {}, {"foo": "B"}],
+        [{}, {}, {"foo": "C"}, {"foo": "C"}],
+    ],
+)
+def test_compile_environment(os_environ, global_env, cmd_env, expected_result):
+    # Arrange
+    # Act
+    with patch.dict(os.environ, os_environ, clear=True):
+        result = compile_environment(cmd_env, global_env)
+
+    # Assert
+    assert result == expected_result
