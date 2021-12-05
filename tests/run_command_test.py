@@ -77,7 +77,7 @@ def test_run_command_accepts_env(capfd):
     out, err = capfd.readouterr()
 
     # Assert
-    assert out == f"{test_value}\n"
+    assert out == "{}\n".format(test_value)
 
 
 def test_run_command_simple_glob(capfd):
