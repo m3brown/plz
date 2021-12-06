@@ -490,7 +490,7 @@ testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.5"
-content-hash = "941e90605f8a62b3cebe999de389664ed96653bd23fb89a6ee574123a3d69d60"
+content-hash = "7da622aa52eca1a9259988b26c870dfe207132fa2a1f94d8749f58d57f9e5eee"
 
 [metadata.files]
 "aspy.yaml" = [
