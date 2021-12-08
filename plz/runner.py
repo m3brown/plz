@@ -3,7 +3,7 @@ import shlex
 import subprocess
 import textwrap
 
-from .colorize import print_error, print_error_dim, print_info_dim
+from .colorize import print_error, print_error_dim, print_info_dim, print_warning
 from .glob_tools import process_absolute_glob, process_relative_glob
 
 
@@ -19,6 +19,9 @@ def run_command(command, cwd=None, args=[], env=None):
     try:
         subprocess.check_call(cleaned_cmd + args, cwd=cwd, env=env)
     except subprocess.CalledProcessError:
+        return 1
+    except KeyboardInterrupt:
+        print_warning("\nProcess aborted")
         return 1
     return 0
 

@@ -1,12 +1,9 @@
 import os
+import subprocess
 from unittest import skip
+from unittest.mock import patch
 
 from plz.runner import run_command
-
-try:
-    pass
-except ImportError:
-    pass
 
 starting_dir = os.getcwd()
 
@@ -19,6 +16,30 @@ def test_run_command_returns_int():
 
     # Assert
     assert type(result) == int
+
+
+@patch("subprocess.check_call")
+def test_run_command_returns_1_if_CalledProcessError(mock_check_call):
+    # Arrange
+    mock_check_call.side_effect = subprocess.CalledProcessError
+
+    # Act
+    result = run_command('bash -c "exit 99"')
+
+    # Assert
+    assert result == 1
+
+
+@patch("subprocess.check_call")
+def test_run_command_returns_1_if_CalledProcessError(mock_check_call):
+    # Arrange
+    mock_check_call.side_effect = KeyboardInterrupt
+
+    # Act
+    result = run_command('bash -c "exit 99"')
+
+    # Assert
+    assert result == 1
 
 
 @skip("Error codes no longer supported")
