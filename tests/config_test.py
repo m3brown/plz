@@ -6,6 +6,7 @@ from io import StringIO
 import pytest
 
 from plz.config import (
+    DeprecatedSchemaException,
     InvalidYamlException,
     NoFileException,
     git_root,
@@ -224,3 +225,24 @@ def test_git_root_with_good_rc(mock_check_output):
 
     # Assert
     assert result == "/sample/path"
+
+
+@pytest.mark.parametrize(
+    "exception",
+    [
+        InvalidYamlException("foo"),
+        NoFileException,
+        DeprecatedSchemaException,
+    ],
+)
+@patch("plz.config.find_file")
+@patch("sys.exit")
+def test_plz_config_exception_calls_sys_exit_1(mock_exit, mock_find_file, exception):
+    # Arrange
+    mock_find_file.side_effect = exception
+
+    # Act
+    plz_config()
+
+    # Assert
+    mock_exit.assert_called_once_with(1)
