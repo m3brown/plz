@@ -30,6 +30,6 @@ schema = {
             "additionalProperties": False,
         },
         "global_env": env_variable_dict,
-        "additionalProperties": False,
     },
+    "additionalProperties": False,
 }
