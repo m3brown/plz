@@ -1,5 +1,3 @@
-from jsonschema import exceptions, validate
-
 single_word_regex = "^[A-Za-z0-9_-]+$"
 
 env_variable_dict = {
@@ -32,20 +30,6 @@ schema = {
             "additionalProperties": False,
         },
         "global_env": env_variable_dict,
-        "additionalProperties": False,
     },
+    "additionalProperties": False,
 }
-
-
-def validate_configuration_data(parsed_data):
-    try:
-        validate(parsed_data, schema)
-    except TypeError as e:
-        integer_message = "expected string or bytes-like object"
-        if str(e) == integer_message:
-            raise exceptions.ValidationError(
-                "Parsing exception: '{}'. Confirm all integer values in the plz.yaml config are wrapped in quotes.".format(
-                    integer_message
-                )
-            )
-        raise e

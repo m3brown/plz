@@ -7,7 +7,7 @@ import yaml
 from jsonschema.exceptions import ValidationError
 
 from .colorize import print_error, print_info, print_warning
-from .schema import validate_configuration_data
+from .schema import DeprecatedSchemaException, validate_configuration_data
 
 DOC_URL = "https://github.com/m3brown/plz"
 
@@ -95,7 +95,11 @@ def plz_config():
             match = find_file(".plz.yaml")
             if match:
                 print_warning(
-                    "DEPRECATION WARNING: Please rename '.plz.yaml' to 'plz.yaml'"
+                    textwrap.dedent(
+                        """
+                        DEPRECATION WARNING: Please rename '.plz.yaml' to 'plz.yaml'
+                        """
+                    )
                 )
             else:
                 raise NoFileException
@@ -104,3 +108,6 @@ def plz_config():
         invalid_directory()
     except InvalidYamlException as e:
         invalid_yaml(e.filename)
+    except DeprecatedSchemaException:
+        # Error message is printed upstream
+        sys.exit(1)

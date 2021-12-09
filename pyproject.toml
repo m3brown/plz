@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "plz-cmd"
-version = "1.0.4"
+version = "1.0.5"
 description = "command line app for running configurable shell commands"
 readme = "README.md"
 authors = ["Mike Brown <mike.brown@excella.com>"]
