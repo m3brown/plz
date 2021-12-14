@@ -1,6 +1,6 @@
 ## plz-cmd
 
-[![Build Status](https://travis-ci.org/m3brown/plz.svg?branch=master)](https://travis-ci.org/m3brown/plz)
+[![Build Status](https://github.com/m3brown/plz/actions/workflows/python-app.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/m3brown/plz/badge.svg?branch=master)](https://coveralls.io/github/m3brown/plz?branch=master)
 
 A shell command to execute standard/repeatable commands in a git repo
