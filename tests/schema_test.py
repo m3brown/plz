@@ -1,3 +1,5 @@
+from unittest import skip
+
 import pytest
 from jsonschema.exceptions import ValidationError
 
@@ -124,6 +126,7 @@ def test_validate_env(key, value, expect_pass, is_global):
             validate_configuration_data(config)
 
 
+@skip("Temporarily disabled for soft deprecation")
 def test_legacy_config_raises_DeprecatedSchemaException():
     # Arrange
     legacy_config = [
@@ -143,6 +146,7 @@ def test_legacy_config_raises_DeprecatedSchemaException():
         validate_configuration_data(legacy_config)
 
 
+@skip("Temporarily disabled for soft deprecation")
 def test_legacy_config_prints_informational_message(capfd):
     # Arrange
     legacy_config = [

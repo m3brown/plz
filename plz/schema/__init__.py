@@ -42,8 +42,9 @@ def validate_configuration_data(parsed_data):
             raise e
         # If validation does not raise an exception, the config is
         # using the deprecated v1 schema.
-        deprecated_schema_message()
-        raise DeprecatedSchemaException()
+        # TODO: fully deprecate (raise exception) in a future version
+        # deprecated_schema_message()
+        # raise DeprecatedSchemaException()
     except TypeError as e:
         check_integer_values(e)
         raise e

@@ -13,6 +13,7 @@ from plz.config import (
     load_config,
     plz_config,
 )
+from plz.schema import validate_configuration_data
 
 if sys.version_info.major > 2:
     from unittest.mock import patch
@@ -246,3 +247,50 @@ def test_plz_config_exception_calls_sys_exit_1(mock_exit, mock_find_file, except
 
     # Assert
     mock_exit.assert_called_once_with(1)
+
+
+@patch("{}.open".format(builtins_module))
+def test_load_config_with_legacy_formatprints_deprecation_message(mock_open, capfd):
+    # Arrange
+    mock_open.return_value = StringIO(
+        textwrap.dedent(
+            """
+            - id: run
+              cmd: echo "./manage.py runserver"
+            - id: test
+              cmd:
+              - "poetry run python -m pytest"
+            """
+        )
+    )
+
+    # Act
+    load_config("filename")
+    out, err = capfd.readouterr()
+
+    # Assert
+    assert "DEPRECATION WARNING: Your plz.yaml file is using a deprecated format" in out
+
+
+@patch("{}.open".format(builtins_module))
+def test_load_config_converts_legacy_config_to_valid_config(mock_open):
+    # Arrange
+    mock_open.return_value = StringIO(
+        textwrap.dedent(
+            """
+            - id: run
+              cmd: echo "./manage.py runserver"
+            - id: test
+              cmd:
+              - "poetry run python -m pytest"
+            """
+        )
+    )
+
+    # Act
+    result = load_config("filename")
+
+    # Assert
+    assert type(result) == dict
+    # Confirm validate_configuration_data does not throw an exception
+    assert validate_configuration_data(result) == None
