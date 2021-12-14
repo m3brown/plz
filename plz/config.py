@@ -53,6 +53,20 @@ def invalid_yaml(filename):
     sys.exit(1)
 
 
+def deprecated_config():
+    print_warning(
+        textwrap.dedent(
+            """
+            DEPRECATION WARNING: Your plz.yaml file is using a deprecated format. Please consider updating to the new format, support for the old format will be removed in the next version of plz-cmd.
+
+            For more information on plz.yaml formatting, visit {}
+            """.format(
+                DOC_URL
+            )
+        )
+    )
+
+
 def git_root():
     try:
         output = subprocess.check_output(["git", "rev-parse", "--show-toplevel"])
@@ -73,6 +87,16 @@ def load_config(filename):
             print_warning("\n" + str(e))
             raise InvalidYamlException(filename)
         print_info("Using config: {}".format(filename), prefix=True)
+
+        # If schema is v1 format, convert to v2
+        if type(config) == list:
+            converted_config = {}
+            for cmd in config:
+                id = cmd.pop("id")
+                converted_config[id] = cmd
+            config = {"commands": converted_config}
+            deprecated_config()
+
         return config
     except yaml.YAMLError as e:
         raise InvalidYamlException(filename)
