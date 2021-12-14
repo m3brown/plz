@@ -1,6 +1,6 @@
 ## plz-cmd
 
-[![Build Status](https://github.com/m3brown/plz/actions/workflows/python-app.yml/badge.svg)
+[![Build Status](https://github.com/m3brown/plz/actions/workflows/python-app.yml/badge.svg)](https://github.com/m3brown/plz/actions?query=workflow%3Abuild)
 [![Coverage Status](https://coveralls.io/repos/github/m3brown/plz/badge.svg?branch=master)](https://coveralls.io/github/m3brown/plz?branch=master)
 
 A shell command to execute standard/repeatable commands in a git repo
