@@ -1,6 +1,6 @@
 single_word_regex = "^[A-Za-z0-9_-]+$"
 
-env_variable_dict = {
+env_variables = {
     "type": "object",
     "patternProperties": {single_word_regex: {"type": "string"}},
     "additionalProperties": False,
@@ -15,7 +15,8 @@ command_schema = {
                 {"type": "array", "items": {"type": "string"}},
             ]
         },
-        "env": env_variable_dict,
+        "env": env_variables,
+        "description": {"type": "string"},
     },
     "required": ["cmd"],
     "additionalProperties": False,
@@ -29,7 +30,7 @@ schema = {
             "patternProperties": {single_word_regex: command_schema},
             "additionalProperties": False,
         },
-        "global_env": env_variable_dict,
+        "global_env": env_variables,
     },
     "additionalProperties": False,
 }

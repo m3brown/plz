@@ -42,6 +42,7 @@ commands:
   run:
     cmd: ./manage.py runserver
   test:
+    description: run unit tests for both backend and frontend
     cmd:
     - ./manage.py test
     - yarn test
