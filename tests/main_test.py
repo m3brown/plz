@@ -123,7 +123,7 @@ def test_execute_from_config_with_valid_cmd(mock_plz_config, mock_gather, mock_e
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with("derp", cwd=None, args=args)
+    mock_gather.assert_called_with("derp", cwd=None, args=args, shortcuts={})
 
 
 @patch("sys.exit")
@@ -142,7 +142,7 @@ def test_execute_from_config_handles_string_command(
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with("test string", cwd=None, args=args)
+    mock_gather.assert_called_with("test string", cwd=None, args=args, shortcuts={})
 
 
 @patch("sys.exit")
@@ -162,7 +162,7 @@ def test_execute_from_config_handles_list_command(
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with(list_command, cwd=None, args=args)
+    mock_gather.assert_called_with(list_command, cwd=None, args=args, shortcuts={})
 
 
 @patch("sys.exit")
@@ -172,16 +172,13 @@ def test_execute_from_config_with_dir(mock_plz_config, mock_gather, mock_exit):
     # Arrange
     args = ["args"]
     config = get_sample_config(dir="foo")
-    mock_plz_config.return_value = (
-        config,
-        None,
-    )
+    mock_plz_config.return_value = (config, None)
 
     # Act
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with("derp", cwd="foo", args=args)
+    mock_gather.assert_called_with("derp", cwd="foo", args=args, shortcuts={})
 
 
 @patch("sys.exit")
@@ -200,7 +197,7 @@ def test_execute_from_config_with_valid_cmd_and_cwd(
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with("derp", cwd=cwd, args=args)
+    mock_gather.assert_called_with("derp", cwd=cwd, args=args, shortcuts={})
 
 
 @patch("sys.exit")
@@ -220,7 +217,9 @@ def test_execute_from_config_with_cwd_and_dir(mock_plz_config, mock_gather, mock
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with("derp", cwd="/root/path/foo", args=args)
+    mock_gather.assert_called_with(
+        "derp", cwd="/root/path/foo", args=args, shortcuts={}
+    )
 
 
 @patch("sys.exit")
@@ -240,7 +239,29 @@ def test_execute_from_config_passes_env_dict_if_defined(
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with(ANY, cwd=ANY, args=ANY, env={"foo": "bar"})
+    mock_gather.assert_called_with(
+        ANY, cwd=ANY, args=ANY, env={"foo": "bar"}, shortcuts=ANY
+    )
+
+
+@patch("sys.exit")
+@patch("plz.main.gather_and_run_commands")
+@patch("plz.main.plz_config")
+def test_execute_from_config_passes_shortcuts_dict_if_defined(
+    mock_plz_config, mock_gather, mock_exit
+):
+    # Arrange
+    args = ["args"]
+    shortcuts = {"foo": "bar"}
+    config = get_sample_config()
+    config["shortcuts"] = shortcuts
+    mock_plz_config.return_value = (config, None)
+
+    # Act
+    main.execute_from_config("testcmd", args)
+
+    # Assert
+    mock_gather.assert_called_with(ANY, cwd=ANY, args=ANY, shortcuts=shortcuts)
 
 
 @patch("sys.exit")
@@ -290,7 +311,7 @@ def test_execute_from_config_with_complex_cmd(mock_plz_config, mock_gather, mock
     main.execute_from_config("testcmd", args)
 
     # Assert
-    mock_gather.assert_called_with(["derp", "herp"], cwd=None, args=args)
+    mock_gather.assert_called_with(["derp", "herp"], cwd=None, args=args, shortcuts={})
 
 
 @patch("sys.exit")

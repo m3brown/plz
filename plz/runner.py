@@ -7,6 +7,12 @@ from .colorize import print_error, print_error_dim, print_info_dim, print_warnin
 from .glob_tools import process_absolute_glob, process_relative_glob
 
 
+def inject_shortcuts(command, shortcuts={}):
+    for k, v in shortcuts.items():
+        command = command.replace("${{{}}}".format(k), v)
+    return command
+
+
 def run_command(command, cwd=None, args=[], env=None):
     pwd = os.getcwd()
     if not cwd:
@@ -26,7 +32,7 @@ def run_command(command, cwd=None, args=[], env=None):
     return 0
 
 
-def gather_and_run_commands(cmd, cwd=None, args=[], env=None):
+def gather_and_run_commands(cmd, **kwargs):
     """
     The cmd argument can either be a string or list
 
@@ -34,6 +40,10 @@ def gather_and_run_commands(cmd, cwd=None, args=[], env=None):
     - If it's a list, recursively run each item in the list.
     """
     if type(cmd) == str:
+        shortcuts = kwargs.pop("shortcuts", [])
+        if shortcuts:
+            cmd = inject_shortcuts(cmd, shortcuts)
+
         print_info_dim(
             textwrap.dedent(
                 """
@@ -41,11 +51,11 @@ def gather_and_run_commands(cmd, cwd=None, args=[], env=None):
                 Running command: {}
                 ===============================================================================
                 """.format(
-                    " ".join([cmd] + args)
+                    " ".join([cmd] + kwargs.get("args", []))
                 )
             )
         )
-        rc = run_command(cmd, cwd=cwd, args=args, env=env)
+        rc = run_command(cmd, **kwargs)
         print()
         if rc > 0:
             print_error("Process failed", prefix=True)
@@ -62,12 +72,12 @@ def gather_and_run_commands(cmd, cwd=None, args=[], env=None):
                         Skipping command due to previous errors: '{}'
                         ===============================================================================
                         """.format(
-                            " ".join([item] + args)
+                            " ".join([item] + kwargs.get("args", []))
                         )
                     )
                 )
             else:
-                rc = gather_and_run_commands(item, cwd=cwd, args=args, env=env)
+                rc = gather_and_run_commands(item, **kwargs)
     else:
         raise Exception("Unrecognized cmd type: {}".format(type(cmd)))
     return rc

@@ -48,6 +48,7 @@ def execute_from_config(cmd, args):
             kwargs = {
                 "cwd": cwd,
                 "args": args,
+                "shortcuts": config.get("shortcuts", {}),
             }
             env = compile_environment(
                 data.get("env", {}), global_env=config.get("global_env", {})

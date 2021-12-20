@@ -39,6 +39,7 @@ schema = {
             "additionalProperties": False,
         },
         "global_env": env_variables,
+        "shortcuts": env_variables,
     },
     "additionalProperties": False,
 }
