@@ -20,6 +20,11 @@ def get_sample_config():
             "setup": {
                 "cmd": "poetry install",
             },
+            "simple_cmd": "echo 'test command'",
+            "simple_cmd2": [
+                "echo test command",
+                "echo test command",
+            ],
         }
     }
 
@@ -27,6 +32,30 @@ def get_sample_config():
 def test_validate_happy_path_succeeds():
     # Arrange
     config = get_sample_config()
+
+    # Act
+    validate_configuration_data(config)
+
+    # Assert
+    pass  # exception was not raised
+
+
+def test_validate_command_string_succeeds():
+    # Arrange
+    config = get_sample_config()
+    config["commands"]["test"] = "poetry install"
+
+    # Act
+    validate_configuration_data(config)
+
+    # Assert
+    pass  # exception was not raised
+
+
+def test_validate_command_simple_array_succeeds():
+    # Arrange
+    config = get_sample_config()
+    config["commands"]["test"] = ["poetry install", "poetry run pre-commit install"]
 
     # Act
     validate_configuration_data(config)

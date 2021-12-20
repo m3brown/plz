@@ -39,20 +39,21 @@ Suppose we have the following `plz.yaml` file:
 
 ```yaml
 commands:
-  run:
-    cmd: ./manage.py runserver
+  # String command
+  run: ./manage.py runserver
+  # Array of command
   test:
-    description: run unit tests for both backend and frontend
-    cmd:
     - ./manage.py test
     - yarn test
+  # Object command, which supports string and array `cmd`
   setup:
+    description: Set up the development environment
     cmd:
     - poetry install
     - poetry run ./manage.py migrate
     - yarn install
-  ls:
-    cmd: ls
+  # ls example is referenced further down in this README
+  ls: ls
 ```
 
 The following commands would be available:
@@ -61,6 +62,7 @@ The following commands would be available:
 plz run
 plz test
 plz setup
+plz ls
 ```
 
 ### Getting help
@@ -117,8 +119,6 @@ Environment variables can be set for an individual command or globally for all c
 ```yaml
 # env variable for an individual command
 commands:
-  run:
-    cmd: ./manage.py runserver
   test:
     cmd: ./manage.py test
     env:
@@ -127,10 +127,9 @@ commands:
 
 ```yaml
 global_env:
-  ACCESS_TOKEN: 12345
+  DJANGO_SETTINGS_MODULE: myapp.settings.test
 commands:
-  run:
-    cmd: ./manage.py runserver
+  test: ./manage.py test
 ```
 
 ### Globbing

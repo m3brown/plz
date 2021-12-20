@@ -40,6 +40,8 @@ def execute_from_config(cmd, args):
 
     data = config["commands"].get(cmd, None)
     if data:
+        if type(data) in [str, list]:
+            data = {"cmd": data}
         if data.get("cmd"):
             if data.get("dir"):
                 cwd = os.path.join(cwd or "", data["dir"])
