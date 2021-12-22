@@ -129,6 +129,45 @@ def test_execute_from_config_with_valid_cmd(mock_plz_config, mock_gather, mock_e
 @patch("sys.exit")
 @patch("plz.main.gather_and_run_commands")
 @patch("plz.main.plz_config")
+def test_execute_from_config_handles_string_command(
+    mock_plz_config, mock_gather, mock_exit
+):
+    # Arrange
+    args = ["args"]
+    config = get_sample_config()
+    config["commands"]["testcmd"] = "test string"
+    mock_plz_config.return_value = (config, None)
+
+    # Act
+    main.execute_from_config("testcmd", args)
+
+    # Assert
+    mock_gather.assert_called_with("test string", cwd=None, args=args)
+
+
+@patch("sys.exit")
+@patch("plz.main.gather_and_run_commands")
+@patch("plz.main.plz_config")
+def test_execute_from_config_handles_list_command(
+    mock_plz_config, mock_gather, mock_exit
+):
+    # Arrange
+    args = ["args"]
+    config = get_sample_config()
+    list_command = ["test string", "another string"]
+    config["commands"]["testcmd"] = list_command
+    mock_plz_config.return_value = (config, None)
+
+    # Act
+    main.execute_from_config("testcmd", args)
+
+    # Assert
+    mock_gather.assert_called_with(list_command, cwd=None, args=args)
+
+
+@patch("sys.exit")
+@patch("plz.main.gather_and_run_commands")
+@patch("plz.main.plz_config")
 def test_execute_from_config_with_dir(mock_plz_config, mock_gather, mock_exit):
     # Arrange
     args = ["args"]

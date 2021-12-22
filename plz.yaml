@@ -1,11 +1,7 @@
 commands:
   test:
-    description: run unit tests
-    cmd:
     - poetry run python -m pytest
   setup:
-    description: set up local development
-    cmd:
     - poetry install
     - poetry run pre-commit install
   lint:

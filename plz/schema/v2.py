@@ -6,7 +6,7 @@ env_variables = {
     "additionalProperties": False,
 }
 
-command_schema = {
+command_obj_schema = {
     "type": "object",
     "properties": {
         "cmd": {
@@ -20,6 +20,14 @@ command_schema = {
     },
     "required": ["cmd"],
     "additionalProperties": False,
+}
+
+command_schema = {
+    "anyOf": [
+        command_obj_schema,
+        {"type": "string"},
+        {"type": "array", "items": {"type": "string"}},
+    ]
 }
 
 schema = {
