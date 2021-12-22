@@ -320,7 +320,7 @@ def test_execute_from_config_prints_description_if_defined(
         == textwrap.dedent(
             """
         \x1b[36m
-        <foo> a description\x1b[0m
+        Description: a description\x1b[0m
         \x1b[36m\x1b[2m
         ===============================================================================
         Running command: echo bar

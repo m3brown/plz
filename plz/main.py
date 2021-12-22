@@ -53,7 +53,7 @@ def execute_from_config(cmd, args):
             if env:
                 kwargs["env"] = env
             if data.get("description"):
-                print_info("\n<{}> {}".format(cmd, data["description"]))
+                print_info("\nDescription: {}".format(data["description"]))
             rc = gather_and_run_commands(data["cmd"], **kwargs)
             sys.exit(rc)
     elif cmd and cmd.lower() == "help":
