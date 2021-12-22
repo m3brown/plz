@@ -132,6 +132,21 @@ commands:
   test: ./manage.py test
 ```
 
+### Shortcuts
+
+Similar to environment variables, shortcuts can be created witin the plz.yaml
+file for reference by individual commands.
+
+```yaml
+shortcuts:
+  dc: docker-compose
+  commands:
+    start:
+      cmd: ${dc} up
+    shell:
+      cmd: ${dc} run web bash
+```
+
 ### Globbing
 
 plz supports asterisk expansion.  For example, the cmd `ls *.py` will work as expected.

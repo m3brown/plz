@@ -120,10 +120,11 @@ def test_validate_command_without_cmd_fails():
 
 
 @pytest.mark.parametrize(
-    "is_global",
+    "config_type",
     [
-        True,
-        False,
+        "global_env",
+        "env",
+        "shortcut",
     ],
 )
 @pytest.mark.parametrize(
@@ -140,13 +141,17 @@ def test_validate_command_without_cmd_fails():
         ["1", "bar", True],
     ],
 )
-def test_validate_env(key, value, expect_pass, is_global):
+def test_validate_env(key, value, expect_pass, config_type):
     # Arrange
     config = get_sample_config()
-    if is_global:
+    if config_type == "global_env":
         config["global_env"] = {key: value}
-    else:
+    elif config_type == "env":
         config["commands"]["test"]["env"] = {key: value}
+    elif config_type == "shortcut":
+        config["shortcuts"] = {key: value}
+    else:
+        raise Exception("did not recognize config type {}".format(config_type))
 
     # Act
     if expect_pass:
