@@ -272,6 +272,68 @@ def test_execute_from_config_with_invalid_cmd_calls_list_options(
     mock_list.assert_called_with(mock_plz_config.return_value[0])
 
 
+@patch("sys.exit")
+@patch("plz.main.plz_config")
+def test_execute_from_config_prints_info_to_stdout(mock_plz_config, mock_exit, capfd):
+    # Arrange
+    config = {"commands": {"foo": {"cmd": "echo bar"}}}
+    mock_plz_config.return_value = (config, None)
+
+    # Act
+    main.execute_from_config("foo", [])
+    out, err = capfd.readouterr()
+
+    # Assert
+    assert (
+        out
+        == textwrap.dedent(
+            """
+        \x1b[36m\x1b[2m
+        ===============================================================================
+        Running command: echo bar
+        ===============================================================================
+        \x1b[0m
+        bar
+
+        \x1b[36m\x1b[2m[INFO] Process complete\x1b[0m
+        """
+        ).lstrip()
+    )
+
+
+@patch("sys.exit")
+@patch("plz.main.plz_config")
+def test_execute_from_config_prints_description_if_defined(
+    mock_plz_config, mock_exit, capfd
+):
+    # Arrange
+    config = {"commands": {"foo": {"cmd": "echo bar", "description": "a description"}}}
+    mock_plz_config.return_value = (config, None)
+
+    # Act
+    main.execute_from_config("foo", [])
+    out, err = capfd.readouterr()
+
+    # Assert
+    assert (
+        out
+        == textwrap.dedent(
+            """
+        \x1b[36m
+        Description: a description\x1b[0m
+        \x1b[36m\x1b[2m
+        ===============================================================================
+        Running command: echo bar
+        ===============================================================================
+        \x1b[0m
+        bar
+
+        \x1b[36m\x1b[2m[INFO] Process complete\x1b[0m
+        """
+        ).lstrip()
+    )
+
+
 @pytest.mark.parametrize(
     "os_environ,global_env,cmd_env,expected_result",
     [

@@ -15,6 +15,7 @@ def get_sample_config():
         "commands": {
             "test": {
                 "cmd": "poetry run python -m pytest",
+                "description": "run unit tests",
             },
             "setup": {
                 "cmd": "poetry install",

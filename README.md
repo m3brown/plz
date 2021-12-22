@@ -42,6 +42,7 @@ commands:
   run:
     cmd: ./manage.py runserver
   test:
+    description: run unit tests for both backend and frontend
     cmd:
     - ./manage.py test
     - yarn test
@@ -81,6 +82,32 @@ Print the yaml schema for any defined command with `plz help <command>`:
 test:
   cmd:
   - poetry run python -m pytest
+```
+
+### Description
+
+Setting a description attribute for a command will display the description in the
+console output. This can be useful if the command is not self explanatory.
+
+```yaml
+commands:
+  echo:
+    cmd: echo hello
+    description: This is a sample description
+```
+
+```
+> plz echo
+
+[INFO] Using config: plz.yaml
+
+Description: This is a sample description
+
+===============================================================================
+Running command: echo hello
+===============================================================================
+
+hello
 ```
 
 ### Environment variables

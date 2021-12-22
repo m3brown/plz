@@ -40,8 +40,8 @@ def execute_from_config(cmd, args):
 
     data = config["commands"].get(cmd, None)
     if data:
-        if "cmd" in data.keys():
-            if "dir" in data.keys():
+        if data.get("cmd"):
+            if data.get("dir"):
                 cwd = os.path.join(cwd or "", data["dir"])
             kwargs = {
                 "cwd": cwd,
@@ -52,9 +52,11 @@ def execute_from_config(cmd, args):
             )
             if env:
                 kwargs["env"] = env
+            if data.get("description"):
+                print_info("\nDescription: {}".format(data["description"]))
             rc = gather_and_run_commands(data["cmd"], **kwargs)
             sys.exit(rc)
-    if cmd and cmd.lower() == "help":
+    elif cmd and cmd.lower() == "help":
         if len(args) == 1:
             data = config["commands"].get(args[0], None)
             if data:
