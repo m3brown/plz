@@ -1,6 +1,5 @@
 commands:
-  test:
-    - poetry run python -m pytest
+  test: poetry run python -m pytest
   setup:
     - poetry install
     - poetry run pre-commit install
