@@ -14,7 +14,7 @@ packages = [
 plz = "plz.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6"
 colorama = "^0.4"
 jsonschema = [
     {version = "^3.2.0", python = "<3.7"},
