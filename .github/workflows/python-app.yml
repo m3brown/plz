@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, "3.10"]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10", 3.11]
         poetry-version: [1.1.13]
 
     runs-on: ubuntu-latest
@@ -26,30 +26,23 @@ jobs:
 
     - name: Install poetry ${{ matrix.poetry-version }}
       run: |
-        python -m ensurepip
-        pip install --upgrade pip
         pip install poetry==${{ matrix.poetry-version }}
 
     - name: Install dependencies
       run: poetry install
 
     - name: Test with pytest
-      env:
-        PYTHONPATH: "."
-      run: |
-        poetry run python -m pytest --cov=plz --cov-fail-under 60
+      run: poetry run coverage run -m pytest
 
-    - name: Convert coverage to lcov
+    - name: Generate lcov
       # We only need to generate coverage once
-      if: matrix.python-version == '3.10'
-      run: |
-        pip install coveragepy-lcov
-        coveragepy-lcov
+      if: matrix.python-version == 3.11
+      run: poetry run coverage lcov
 
     - name: Coveralls
       # We only need to generate coverage once
-      if: matrix.python-version == '3.10'
+      if: matrix.python-version == 3.11
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: "./lcov.info"
+        path-to-lcov: "./coverage.lcov"

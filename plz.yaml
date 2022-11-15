@@ -1,5 +1,10 @@
 commands:
-  test: poetry run python -m pytest
+  test:
+    - poetry run coverage run -m pytest
+    - poetry run coverage report
+  cov:
+    - poetry run coverage html
+    - open htmlcov/index.html
   setup:
     - poetry install
     - poetry run pre-commit install

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "plz-cmd"
-version = "1.2.1"
+version = "1.2.2"
 description = "command line app for running configurable shell commands"
 readme = "README.md"
 authors = ["Mike Brown <mike.brown@excella.com>"]
@@ -27,8 +27,14 @@ pre-commit = [
     {version = "^1.21", python = "<3.6.1"},
     {version = "^2.17.0", python = ">=3.6.1"}
 ]
-pytest = ">=6.2.5"
-pytest-cov = "^3.0.0"
+pytest = [
+    {version = ">=6.2.5", python = "<3.7"},
+    {version = ">=7.2.0", python = ">=3.7"}
+]
+coverage = [
+    {version = "^6.2.0", python= "<3.7"},
+    {version = ">=6.5.0", python= ">=3.7"}
+]
 
 [build-system]
 requires = ["poetry>=1.1.13"]

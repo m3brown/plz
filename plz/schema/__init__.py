@@ -23,7 +23,7 @@ def deprecated_schema_message():
 
 def check_integer_values(exception):
     integer_message = "expected string or bytes-like object"
-    if str(exception) == integer_message:
+    if str(exception).startswith(integer_message):
         raise exceptions.ValidationError(
             "Parsing exception: '{}'. Confirm all integer values in the plz.yaml config are wrapped in quotes.".format(
                 integer_message
