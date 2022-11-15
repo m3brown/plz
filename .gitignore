@@ -6,13 +6,14 @@ plz_cmd.egg-info
 .pytest_cache
 *.swp
 .coverage
-lcov.info
+coverage.lcov
 .tox
 dist/
 build/
 
 # Environments
 .env
+.python-version
 .venv
 env/
 venv/
